@@ -26,7 +26,11 @@ class CustomRequest extends FormRequest
         return [
             'name' => 'required',
             'email' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'confirm_password' => 'required',
+            'profile_image' => '',
+            'type' => 'required',
+            'address' => 'required',
         ];
     }
     public function messages()
@@ -34,7 +38,10 @@ class CustomRequest extends FormRequest
         return [
             'name.required' => 'required name',
             'email.required' => 'required email',
-            'password.required' => 'required password'
+            'password.required' => 'required password',
+            'confirm_password.required' => 'required password',
+            'type.required' => 'required password',
+            'address.required' => 'required password'
         ];
     }
 }

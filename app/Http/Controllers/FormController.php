@@ -25,10 +25,7 @@ class FormController extends Controller
      */
     public function create()
     {
-        $users = User::all();
-        return view('users.create',[
-            "roles" => $users
-        ]);
+        return view('users.create');
     }
 
     /**

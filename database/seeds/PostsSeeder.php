@@ -11,11 +11,13 @@ class PostsSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=10; $i < 31; $i++) { 
+        for ($i=1; $i < 31; $i++) { 
             DB::table('posts')->insert([
                 'title' => 'Title '.$i,
                 'description' => 'Description '.$i,
-                'status' => true,
+                'status' => '1',
+                'create_user_id' => '1',
+                'updated_user_id' => '1',
             ]);
     	}
     }

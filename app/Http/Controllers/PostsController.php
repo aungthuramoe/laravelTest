@@ -43,7 +43,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        $posts = Post::all();
+        $posts = Post::paginate(5);
         return view('posts.post_create_form', [
             "posts" => $posts
         ]);
@@ -60,6 +60,7 @@ class PostsController extends Controller
         $title = $request->title;
         $description = $request->description;
         $status = true;
+        
         $post = new Post;
         $post->title = $title;
         $post->description = $description;

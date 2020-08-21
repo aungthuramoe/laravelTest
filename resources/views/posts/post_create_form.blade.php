@@ -35,7 +35,6 @@
                 @endif
                 @guest
                 @else
-
                 <button class="btn btn-success mb-3 float-right" data-toggle="modal" data-target="#add-post">Add Post <i class="fa fa-plus fa-lg"></i></button>
                 @endguest
                 <table class="table table-hover table-bordered">
@@ -61,7 +60,7 @@
                             @else
                             <td class="text-right">
                                 <button data-id="{{$post->id}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-primary px-3" data-toggle="modal" data-target="#edit-post">Edit <i class="fa fa-edit"></i></button>
-                                <button data-id="{{$post->id}}" class="btn btn-danger"  data-toggle="modal" data-target="#delete-post"> Delete <i class="fa fa-trash"></i></button>
+                                <button data-id="{{$post->id}}" class="btn btn-danger" data-toggle="modal" data-target="#delete-post"> Delete <i class="fa fa-trash"></i></button>
                             </td>
                             @endguest
                         </tr>
@@ -69,6 +68,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-center">
+                    {!! $posts->links() !!}
+                </div>
             </div>
         </div>
 

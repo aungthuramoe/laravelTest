@@ -61,9 +61,9 @@
                                         <label for="user_type" class="col-sm-3 col-form-label">User Type</label>
                                         <div class="col-sm-9">
                                             <select class="form-control form-control-user">
-                                                @foreach($roles as $role)
-                                                <option value="{{$role->name}}">{{$role->name}}</option>
-                                                @endforeach
+                                                <option></option>
+                                                <option value="0">Admin</option>
+                                                <option value="1">User</option>
                                             </select>
                                         </div>
                                         <!-- <div class="col-sm-9">
@@ -102,8 +102,8 @@
                                         <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('profile_image') }}</span>
                                         @endif
                                     </div>
-                                    <button type="submit" class="col-sm-12 col-lg-6 btn btn-success text-uppercase btn-block">Create</button>
-                                    <button type="reset" class="col-sm-12 col-lg-6 btn btn-primary text-uppercase btn-block">Clear</button>
+                                    <button type="submit" class="col-sm-12 col-lg-12 btn btn-success text-uppercase btn-block">Confirm</button>
+                                    <button type="reset" class="col-sm-12 col-lg-12 btn btn-primary text-uppercase btn-block mb-3">Clear</button>
                                 </form>
                             </div>
                         </div>
