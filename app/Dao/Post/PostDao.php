@@ -9,11 +9,14 @@ class PostDao implements PostDaoInterface
 {
     /**
      * Get Post List
-     * @param Object
      * @return $postList
      */
     public function getPostList()
     {
-        return Post::paginate(10);
+        return Post::latest()->paginate(10);
+    }
+    public function userPost($id)
+    {
+        return Post::where('create_user_id', '=',$id)->paginate(2);
     }
 }

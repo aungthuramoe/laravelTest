@@ -35,7 +35,10 @@
                 @endif
                 @guest
                 @else
-                <button class="btn btn-success mb-3 float-right" data-toggle="modal" data-target="#add-post">Add Post <i class="fa fa-plus fa-lg"></i></button>
+                <!-- <button class="btn btn-success mb-3 float-right" data-toggle="modal" data-target="#add-post">Add Post <i class="fa fa-plus fa-lg"></i></button> -->
+                <a href="users/create" type="button" class="btn btn-primary mb-3 justify-content-center">Upload <i class="fa fa-upload"></i></a>
+                <a href="users/create" type="button" class="btn btn-primary mb-3 float-center">Download <i class="fa fa-download"></i></a>
+                <a href="posts/create" type="button" class="btn btn-success mb-3 float-right">Add Post <i class="fa fa-plus fa-lg"></i></a>
                 @endguest
                 <table class="table table-hover table-bordered">
                     <thead class="thead-dark">
@@ -91,11 +94,6 @@
                             <label><strong>Post Title</strong></label>
                             <input type="text" class="form-control" id="title" name="title" placeholder="Post Title"></input><br>
                         </div>
-
-                        <!-- <div class="form-group">
-                            <label>Post Description</label>
-                            <textarea class="form-control" name="description" placeholder="Post Description"></textarea>
-                        </div> -->
                         <div class="form-group">
                             <label><strong>Post Description</strong></label>
                             <input type="text" class="form-control" id="description" name="description" placeholder="Post Description"></input>
@@ -135,6 +133,11 @@
                             <label><strong>Post Description</strong></label>
                             <input type="text" class="form-control" id="description" name="description" placeholder="Post Description"></input>
                         </div>
+                        <!-- Default checked -->
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="customSwitch1" checked>
+                            <label class="custom-control-label">Status</label>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success text-uppercase  btn-block mx-2">Update</button>
@@ -163,6 +166,7 @@
     </div>
     @endsection
     @push('scripts')
+
     <script>
         $('#edit-post').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)

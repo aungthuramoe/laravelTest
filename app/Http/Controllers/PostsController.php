@@ -6,6 +6,8 @@ use App\Models\Post;
 use App\Contracts\Services\Post\PostServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\Redirect;
 
 class PostsController extends Controller
 {
@@ -43,10 +45,28 @@ class PostsController extends Controller
      */
     public function create()
     {
-        $posts = Post::paginate(5);
-        return view('posts.post_create_form', [
+        return view('posts.post_create');
+    }
+
+    public function confirm(PostRequest $request)
+    {
+        $data['title'] = $request->title;
+        $data['description'] = $request->description;
+        return view('posts.post_confirm', compact('data'));
+    }
+
+    public function userPost()
+    {
+
+        $posts = Post::where('create_user_id', '=', auth()->user()->id)->paginate(5);
+        return view('posts.user_post', [
             "posts" => $posts
         ]);
+        // $posts = $this->postInterface->userPost(auth()->user()->id);
+
+        // return view('posts.user_post', [
+        //     "posts" => $posts
+        // ]);
     }
 
     /**
@@ -55,19 +75,25 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        $title = $request->title;
-        $description = $request->description;
-        $status = true;
-        
-        $post = new Post;
-        $post->title = $title;
-        $post->description = $description;
-        $post->status = $status;
-        $post->save();
+        switch ($request->input('status')) {
+            case 'create':
+                $title = $request->title;
+                $description = $request->description;
+                $post = new Post;
+                $post->title = $title;
+                $post->description = $description;
+                $post->create_user_id = auth()->user()->id;
+                $post->updated_user_id = auth()->user()->id;
+                $post->save();
+                return redirect('/posts')->with('create', 'Post Create Successfully');
+                break;
 
-        return redirect('/posts')->with('create', 'Post Create Successfully');;
+            case 'cancel':
+                return redirect('/posts/create');              
+                break;
+        }
     }
 
     /**
@@ -102,14 +128,9 @@ class PostsController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
-
-        $title = $request->title;
-        $description = $request->description;
-        $status = true;
-
         $post->title = $request->title;
         $post->description = $request->description;
-        $post->status = $status;
+        $post->status = 1;
         $post->update();
 
         return redirect('/posts')->with('update', 'Update Successfully');

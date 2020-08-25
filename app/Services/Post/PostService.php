@@ -28,4 +28,8 @@ class PostService implements PostServiceInterface
   {
     return $this->postDao->getPostList();
   }
+  public function userPost($id)
+  {
+    $this->postDao->userPost($id);
+  }
 }

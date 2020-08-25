@@ -14,6 +14,6 @@ class UserDao implements UserDaoInterface
    */
   public function getUserList()
   {
-    return User::get();
+    return User::latest()->paginate(8);
   }
 }

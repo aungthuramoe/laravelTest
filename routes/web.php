@@ -27,7 +27,9 @@ Route::get('/', function () {
 // });
 
 Route::get('/','PostsController@index');
-Route::get('/posts','PostsController@create');
+Route::get('/posts','PostsController@userPost');
+Route::get('/posts/create','PostsController@create');
+Route::post('/posts/confirm','PostsController@confirm')->name('confirm');
 Route::post('/posts/store','PostsController@store');
 Route::put('/posts/update/{id}','PostsController@update');
 Route::delete('/posts/delete/{id}','PostsController@destroy');
@@ -36,8 +38,10 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::post('/users/confirm', 'FormController@confirmation');
-Route::get('/users/create', 'FormController@create');
-Route::post('/form', 'FormController@store');
-
+// Route::post('/users/confirm', 'UserController@confirmation');
+Route::post('/users/confirm', 'UserController@confirm');
+// Route::get('/users/confirm', 'UserController@confirm');
+Route::get('/users/create', 'UserController@create');
+Route::post('/users/store', 'UserController@store')->name('store');;
 Route::get('/users','UserController@index');
+Route::get('/profile','UserController@profile')->name('profile');

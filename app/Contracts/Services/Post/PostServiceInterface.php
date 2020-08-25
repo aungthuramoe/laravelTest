@@ -6,4 +6,5 @@ interface PostServiceInterface
 {
   //get post list
   public function getPostList();
+  public function userPost($id);
 }

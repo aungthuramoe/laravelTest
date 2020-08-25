@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Contracts\Services\User\UserServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateUserRequest;
+use App\Models\CustomRequest;
+use App\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -25,11 +30,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        // $users = User::all();
-        // return view('users.user', [
-        //     "users" => $users
-        // ]);
-        
         $userList = $this->userInterface->getUserList();
         return view('users.user', [
             'users' => $userList,
@@ -43,7 +43,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create');
     }
 
     /**
@@ -54,7 +54,33 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        switch ($request->input('status')) {
+            
+            case 'create':
+                $user = new User();
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->password = Hash::make($request->password);
+
+                $user->type = $request->user_type;
+                $user->phone = $request->phone;
+                $user->dob = $request->dob;
+                $user->address = $request->address;
+                $user->profile = "profileImageURL";
+                $user->create_user_id = auth()->user()->id;
+                $user->updated_user_id = auth()->user()->id;
+                $user->deleted_user_id = auth()->user()->id;
+                $user->save();
+
+                return redirect('/users')->with('create', 'User Created Successfully');
+
+                break;
+
+            case 'cancel':
+                return redirect('/users/create');
+                break;
+        }
     }
 
     /**
@@ -100,5 +126,34 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function confirm(CreateUserRequest $request)
+    {
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = $request->password;
+        $data['user_type'] = $request->user_type;
+        $data['phone_number'] = $request->phone_number;
+        $data['date_of_birth'] = $request->date_of_birth;
+        $data['address'] = $request->address;
+        $data['profile'] = auth()->user()->id.'.jpg';
+        // $data['profile'] = $request->profile;
+
+        if ($request->hasFile('profile')) {
+            $path = $request->file('profile')->storeAs(
+                'public/images', auth()->user()->id.'.jpg'
+            );
+        }
+        return view('users.user_confirm', compact('data'));
+    }
+    public function profile()
+    {
+        $user = User::find(auth()->user()->id);
+        if ($user->type == 0) {
+            $user->type = "Admin";
+        } else {
+            $user->type = "User";
+        }
+        return view('users.profile')->with('data', $user);
     }
 }
