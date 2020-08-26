@@ -63,7 +63,7 @@
                         <div class="form-group row">
                             <div class="col-sm-10 col-lg-8">
                                 <button type="submit" value="cancel" name="status" class="btn btn-primary  form-control text-uppercase">Cancel</button>
-                            </div>
+                            </div> 
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-10 col-lg-8">

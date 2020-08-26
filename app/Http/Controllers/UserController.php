@@ -43,7 +43,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $roles = ['Admin','User'];
+        return view('users.create')->with('role',$roles);
     }
 
     /**
@@ -78,7 +79,7 @@ class UserController extends Controller
                 break;
 
             case 'cancel':
-                return redirect('/users/create');
+                return redirect('/users/create')->withInput();
                 break;
         }
     }
@@ -129,6 +130,7 @@ class UserController extends Controller
     }
     public function confirm(CreateUserRequest $request)
     {
+ 
         $data['name'] = $request->name;
         $data['email'] = $request->email;
         $data['password'] = $request->password;
@@ -156,4 +158,5 @@ class UserController extends Controller
         }
         return view('users.profile')->with('data', $user);
     }
+
 }

@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Contracts\Services\Post\PostServiceInterface;
+use App\Exports\PostImport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Redirect;
 
 class PostsController extends Controller
@@ -55,6 +59,13 @@ class PostsController extends Controller
         return view('posts.post_confirm', compact('data'));
     }
 
+    public function update_confirm(PostRequest $request)
+    {
+        $data['title'] = $request->title;
+        $data['description'] = $request->description;
+        return view('posts.post_confirm', compact('data'));
+    }
+
     public function userPost()
     {
 
@@ -89,9 +100,8 @@ class PostsController extends Controller
                 $post->save();
                 return redirect('/posts')->with('create', 'Post Create Successfully');
                 break;
-
             case 'cancel':
-                return redirect('/posts/create');              
+                return redirect('/posts/create')->withInput();
                 break;
         }
     }
@@ -113,9 +123,14 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        //
+
+        $post = Post::find($id);
+        $data['title'] = $post->title;
+        $data['description'] = $post->description;
+        $data['status'] = $post->status;
+        return view('posts.post_edit', compact('data'));
     }
 
     /**
@@ -125,9 +140,11 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $post = Post::find($id);
+
+        $post_id = $request->post_id;
+        $post = Post::find($post_id);
         $post->title = $request->title;
         $post->description = $request->description;
         $post->status = 1;
@@ -142,10 +159,40 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $post = Post::find($id);
+        $post_id = $request->post_id;
+        $post = Post::find($post_id);
         $post->delete();
-        return redirect('/posts')->with('delete', 'Delete Successfully');;
+        return redirect('/posts')->with('delete', 'Delete Successfully');
+    }
+    public function upload()
+    {
+        return view('posts.upload_csv');
+    }
+    public function export()
+    {
+        return Excel::download(new PostImport, 'posts.xlsx');
+    }
+    public function csvfileupload(Request $request)
+    {
+        if ($request->hasFile('csvfile')) {
+            $path = $request->file('csvfile')->getRealPath();
+            //  $data = Excel::import($path)->get();
+            $data = Excel::import(new PostImport, $request->file('csvfile'));
+            foreach ($data as $key => $value) {
+                $arr[] = [
+                    'title' => $value->title,
+                    'description' => $value->address,
+                    'create_user_id' => $value->create_user_id,
+                ];
+            }
+            if (!empty($arr)) {
+                // DB::table('template')->insert($arr);
+
+                return dd($arr);
+            }
+            return dd($data);
+        }
     }
 }

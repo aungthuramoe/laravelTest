@@ -29,10 +29,15 @@ Route::get('/', function () {
 Route::get('/','PostsController@index');
 Route::get('/posts','PostsController@userPost');
 Route::get('/posts/create','PostsController@create');
+Route::get('/posts/edit/{id}','PostsController@edit')->name('edit');
 Route::post('/posts/confirm','PostsController@confirm')->name('confirm');
+Route::post('/posts/update_confirm','PostsController@update_confirm')->name('update_confirm');
 Route::post('/posts/store','PostsController@store');
-Route::put('/posts/update/{id}','PostsController@update');
-Route::delete('/posts/delete/{id}','PostsController@destroy');
+Route::put('/posts/update','PostsController@update');
+Route::delete('/posts/delete','PostsController@destroy');
+Route::get('/posts/upload', 'PostsController@upload');
+Route::get('posts/export', 'PostsController@export')->name('export');
+Route::post('/posts/insert', 'PostsController@csvfileupload')->name('upload_csv');
 
 Auth::routes();
 

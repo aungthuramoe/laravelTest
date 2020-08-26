@@ -36,16 +36,17 @@
                 @guest
                 @else
                 <!-- <button class="btn btn-success mb-3 float-right" data-toggle="modal" data-target="#add-post">Add Post <i class="fa fa-plus fa-lg"></i></button> -->
-                <a href="users/create" type="button" class="btn btn-primary mb-3 justify-content-center">Upload <i class="fa fa-upload"></i></a>
-                <a href="users/create" type="button" class="btn btn-primary mb-3 float-center">Download <i class="fa fa-download"></i></a>
+                <a href="posts/upload" type="button" class="btn btn-primary mb-3 justify-content-center">Upload <i class="fa fa-upload"></i></a>
+                <a href="{{ route('export') }}" type="button" class="btn btn-primary mb-3 float-center">Download <i class="fa fa-download"></i></a>
                 <a href="posts/create" type="button" class="btn btn-success mb-3 float-right">Add Post <i class="fa fa-plus fa-lg"></i></a>
                 @endguest
                 <table class="table table-hover table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">ID</th>
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Posted User</th>
+                            <th scope="col">Posted Date</th>
                             @guest
                             @else
                             <th class="text-right">Actions</th>
@@ -54,20 +55,21 @@
                     </thead>
                     <tbody>
                         @foreach($posts as $post)
-                        @if ($post->status === 1)
                         <tr>
-                            <th scope="row">{{$post->id}}</th>
                             <td>{{$post->title}}</td>
                             <td>{{$post->description}}</td>
+                            <td>{{$post->create_user_id}}</td>
+                            <td>{{ date('d/m/Y', strtotime($post->created_at)) }}</td>
                             @guest
                             @else
                             <td class="text-right">
-                                <button data-id="{{$post->id}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-primary px-3" data-toggle="modal" data-target="#edit-post">Edit <i class="fa fa-edit"></i></button>
+                                <!-- <button data-id="{{$post->id}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-primary px-3" data-toggle="modal" data-target="#edit-post">Edit <i class="fa fa-edit"></i></button> -->
+                                <button data-id="{{$post->id}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-primary px-3" data-toggle="modal" data-target="#view-post">View <i class="fa fa-eye"></i></button>
+                                <a href="{{ route('edit',['id'=>$post->id])}}" class="btn btn-primary">Edit <i class="fa fa-edit"></i></a>
                                 <button data-id="{{$post->id}}" class="btn btn-danger" data-toggle="modal" data-target="#delete-post"> Delete <i class="fa fa-trash"></i></button>
                             </td>
                             @endguest
                         </tr>
-                        @endif
                         @endforeach
                     </tbody>
                 </table>
@@ -107,7 +109,7 @@
             </form>
         </div>
     </div>
-    <div class="modal" id="edit-post" tabindex="-1">
+    <!-- <div class="modal" id="edit-post" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -116,24 +118,20 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="/posts/update/40" method="POST">
+                <form action="/posts/update" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
                         <div class="form-group">
                             <label><strong>Post Title</strong></label>
                             <input type="text" class="form-control" id="title" name="title" placeholder="Post Title"></input><br>
+                            <input type="text" class="form-control" hidden id="post_id" name="post_id"></input>
                         </div>
-
-                        <!-- <div class="form-group">
-                            <label>Post Description</label>
-                            <textarea class="form-control" name="description" placeholder="Post Description"></textarea>
-                        </div> -->
                         <div class="form-group">
                             <label><strong>Post Description</strong></label>
                             <input type="text" class="form-control" id="description" name="description" placeholder="Post Description"></input>
                         </div>
-                        <!-- Default checked -->
+       
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="customSwitch1" checked>
                             <label class="custom-control-label">Status</label>
@@ -145,6 +143,32 @@
                 </form>
             </div>
         </div>
+    </div> -->
+    <div class="modal" id="view-post" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary  text-center w-100"><strong>Post Details</strong></h5>
+                    <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form>
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label><strong>Post Title</strong></label>
+                            <input type="text" readonly class="form-control" id="title" name="title"></input><br>
+                        </div>
+                        <div class="form-group">
+                            <label><strong>Post Description</strong></label>
+                            <input type="text" readonly class="form-control" id="description" name="description"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="modal" id="delete-post" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -152,9 +176,10 @@
                 <div class="modal-header">
                     <h5 class="modal-title"><strong>Are you sure you want to delete ?</strong></h5>
                 </div>
-                <form action="/posts/delete/40" method="POST">
+                <form action="/posts/delete" method="POST">
                     @csrf
                     @method('DELETE')
+                    <input type="text" class="form-control" hidden id="post_id" name="post_id"></input>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success text-uppercase">Delete</button>
@@ -168,15 +193,29 @@
     @push('scripts')
 
     <script>
-        $('#edit-post').on('show.bs.modal', function(event) {
+        // $('#edit-post').on('show.bs.modal', function(event) {
+        //     var button = $(event.relatedTarget)
+        //     var id = button.data('id')
+        //     var title = button.data('title')
+        //     var description = button.data('description')
+        //     var modal = $(this)
+        //     modal.find('#post_id').val(id)
+        //     modal.find('#title').val(title)
+        //     modal.find('#description').val(description)
+        // })
+        $('#view-post').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
-            var id = button.data('id')
             var title = button.data('title')
             var description = button.data('description')
-            console.log("data ", id)
             var modal = $(this)
             modal.find('#title').val(title)
             modal.find('#description').val(description)
+        })
+        $('#delete-post').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget)
+            var id = button.data('id')
+            var modal = $(this)
+            modal.find('#post_id').val(id)
         })
     </script>
     @endpush

@@ -6,7 +6,7 @@
         <div class="col-xl-10 col-lg-12 col-md-9">
             <div class="card o-hidden  border-0 shadow-lg my-5">
                 <div class="col card-header">
-                    <h1 class="display-5 my-2 text-primary text-center">Create Post</h1>
+                    <h1 class="display-5 my-2 text-primary text-center">Update Post</h1>
                 </div>
                 <div class="card-body  p-0">
                     <!-- Nested Row within Card Body -->
@@ -14,7 +14,7 @@
                         <div class="col-lg-9">
                             <div class="p-0">
                                 <!-- <form action="{{ url('/users/confirm') }}" method="POST"> -->
-                                <form action="/posts/confirm" method="POST">
+                                <form action="/posts/update_confirm" method="POST" id="post_form" nmae="formname">
                                     @csrf
                                     <!-- <div class="form-group row">
                                         <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
@@ -25,7 +25,7 @@
                                     <div class="form-group row mt-3">
                                         <label for="title" class="col-sm-3 col-form-label">Post Title</label>
                                         <div class="col-sm-9">
-                                            <input id="title" type="text" class="form-control form-control-user" name="title"  value="{{ old('title') }}" placeholder="Post Title">
+                                            <input id="title" type="text" class="form-control form-control-user" name="title" value="{{$data['title']}}" placeholder="Post Title">
                                         </div>
                                         @if ($errors->has('title'))
                                         <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('title') }}</span>
@@ -34,19 +34,31 @@
                                     <div class="form-group row">
                                         <label for="description" class="col-sm-3 col-form-label">Post Description</label>
                                         <div class="col-sm-9">
-                                            <input id="description" type="text" class="form-control form-control-user" name="description"  value="{{ old('description') }}" placeholder="Post Description">
+                                            <textarea class="form-control form-control-user rounded-0" id="description" rows="3" name="description" placeholder="Post Description">{{$data['description']}}</textarea>
                                         </div>
                                         @if ($errors->has('description'))
                                         <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('description') }}</span>
                                         @endif
                                     </div>
+                                    <div class="form-group row">
+                                        <label for="description" class="col-sm-3 col-form-label">Post Status</label>
+                                        <div class="col-sm-9">
+                                            <label class="form-control" id="status">{{$data['status']}}</label>
+                                        </div>
+                                    </div>
+
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <button class="btn btn-primary form-control  btn-block" type="reset">Clear</button></div>
+                                            <!-- <a class="btn btn-primary form-control  btn-block" name="status" value="clear" type="submit">Clear</a> -->
+                                            <button class="btn btn-primary form-control  btn-block"  type="button" onclick="document.forms['formname'].reset();">
+                                                CLEAR
+                                            </button>
+                                        </div>
                                         <div class="col">
-                                            <button id="btnSubmit" class="btn btn-success form-control btn-block" type="submit">Confirm</button></div>
+                                            <button id="btnSubmit" name="status" value="update" class="btn btn-success form-control btn-block" type="submit">Update</button>
+                                        </div>
                                     </div>
-                                    
+
                                 </form>
                             </div>
                         </div>
