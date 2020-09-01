@@ -16,6 +16,9 @@
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url('/') }}">All Posts</a>
+                </li>
                 @guest
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -26,6 +29,7 @@
                 </li> -->
                 @endif
                 @else
+   
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('profile') }}">Profile</a>
                 </li>
@@ -38,7 +42,7 @@
                 </li>
                 @else
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url('posts') }}">Posts</a>
+                    <a class="nav-link text-white" href="{{ url('posts') }}">My Posts</a>
                 </li>
                 @endcan
 

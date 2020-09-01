@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
 <div class="container">
-    <!-- Outer Row -->
     <div class="row justify-content-center ">
         <div class="col-xl-10 col-lg-12 col-md-9">
             <div class="card o-hidden  border-0 shadow-lg my-5">
@@ -9,53 +8,47 @@
                     <h1 class="display-5 my-2 text-primary text-center">Update Post</h1>
                 </div>
                 <div class="card-body  p-0">
-                    <!-- Nested Row within Card Body -->
                     <div class="row justify-content-center ">
                         <div class="col-lg-9">
                             <div class="p-0">
-                                <!-- <form action="{{ url('/users/confirm') }}" method="POST"> -->
-                                <form action="/posts/update_confirm" method="POST" id="post_form" nmae="formname">
+                                <form action="/posts/update_confirm/{{$data['id']}}" method="POST" id="post_form" name="formname">
                                     @csrf
-                                    <!-- <div class="form-group row">
-                                        <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com">
-                                        </div>
-                                    </div> -->
                                     <div class="form-group row mt-3">
                                         <label for="title" class="col-sm-3 col-form-label">Post Title</label>
                                         <div class="col-sm-9">
-                                            <input id="title" type="text" class="form-control form-control-user" name="title" value="{{$data['title']}}" placeholder="Post Title">
+                                            <input id="title" type="text" class="form-control form-control-user" name="title" value="{{$data['title']?$data['title']:old('title')}}" placeholder="Post Title">
+                                            @if ($errors->has('title'))
+                                            <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('title') }}</span>
+                                            @endif
                                         </div>
-                                        @if ($errors->has('title'))
-                                        <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('title') }}</span>
-                                        @endif
+
                                     </div>
                                     <div class="form-group row">
                                         <label for="description" class="col-sm-3 col-form-label">Post Description</label>
                                         <div class="col-sm-9">
                                             <textarea class="form-control form-control-user rounded-0" id="description" rows="3" name="description" placeholder="Post Description">{{$data['description']}}</textarea>
+                                            @if ($errors->has('description'))
+                                            <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('description') }}</span>
+                                            @endif
                                         </div>
-                                        @if ($errors->has('description'))
-                                        <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('description') }}</span>
-                                        @endif
+
                                     </div>
                                     <div class="form-group row">
                                         <label for="description" class="col-sm-3 col-form-label">Post Status</label>
                                         <div class="col-sm-9">
-                                            <label class="form-control" id="status">{{$data['status']}}</label>
+                                            <input name="status" data-toggle="toggle" data-on="Active" data-off="InActive" @if($data['status']==1) {{ 'checked' }} @endif data-onstyle="success" data-offstyle="danger" type="checkbox">
                                         </div>
+
                                     </div>
 
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <!-- <a class="btn btn-primary form-control  btn-block" name="status" value="clear" type="submit">Clear</a> -->
-                                            <button class="btn btn-primary form-control  btn-block"  type="button" onclick="document.forms['formname'].reset();">
+                                            <button class="btn btn-primary form-control  btn-block" onclick="customReset();" type="button">
                                                 CLEAR
                                             </button>
                                         </div>
                                         <div class="col">
-                                            <button id="btnSubmit" name="status" value="update" class="btn btn-success form-control btn-block" type="submit">Update</button>
+                                            <button value="update" class="btn btn-success form-control btn-block" type="submit">Confirm</button>
                                         </div>
                                     </div>
 
@@ -73,6 +66,8 @@
 </div>
 @endsection
 @push('scripts')
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 <script>
     function readURL(input) {
         if (input.files && input.files[0]) {
@@ -86,5 +81,11 @@
     $("#profile_image").change(function() {
         readURL(this);
     });
+</script>
+<script>
+    function customReset() {
+        document.getElementById("title").value = "";
+        document.getElementById("description").value = "";
+    }
 </script>
 @endpush

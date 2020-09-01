@@ -17,7 +17,8 @@ class PostImport implements ToModel
         return new Post([
             'title'     => $row[0],
             'description'   => $row[1], 
-            'status' => $row[2],
+            'create_user_id' => auth()->user()->id,
+            'updated_user_id' => auth()->user()->id,
         ]);
     }
 }

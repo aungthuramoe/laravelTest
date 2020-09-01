@@ -3,12 +3,18 @@
 @section('content')
 <section>
     <div class="container mt-5">
+        @if (session('message'))
+        <div class="alert alert-success alert-dismissable custom-success-box">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong> {{ session('message') }} </strong>
+        </div>
+        @endif
         <div class="card">
             <div class="card-header text-center">
                 <strong>User Profile</strong>
             </div>
             <div class="card-body ml-5">
-                <form action="/users/confirm" method="POST">
+                <form action="{{route('edit-profile')}}" method="POST">
                     @csrf
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Name</label>
@@ -19,7 +25,7 @@
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Profile Image</label>
                         <div class="col-sm-10 col-lg-9">
-                            <img style="width:100px;height:80px" src="{{ asset('/storage/images/1.jpg') }}" class="rounded" alt="profile">
+                            <img style="width:100px;height:80px" src="/storage/images/{{$data['profile']}}" class="rounded" alt="profile">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -54,7 +60,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-10 col-lg-4">
-                            <button type="submit" value="create" class="btn form-control btn-primary text-uppercase">Edit</i></button>
+                            <button type="submit" class="btn form-control btn-primary text-uppercase">Edit</button>
                         </div>
                     </div>
                 </form>

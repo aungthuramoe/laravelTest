@@ -3,7 +3,12 @@
 @section('content')
 <section>
     <div class="container mt-5">
-
+        @if (session('change_password'))
+        <div class="alert alert-success alert-dismissable custom-success-box">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong> {{ session('change_password') }} </strong>
+        </div>
+        @endif
         <div class="card">
             <div class="card-header">
                 <strong>All Post Lists</strong>
@@ -12,18 +17,22 @@
                 <table class="table table-hover table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">ID</th>
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Posted User</th>
+
+                            <th scope="col">Posted Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($posts as $post)
                         @if ($post->status === 1)
                         <tr>
-                            <th scope="row">{{$post->id}}</th>
                             <td>{{$post->title}}</td>
                             <td>{{$post->description}}</td>
+                            <td>{{$post->create_user_id}}</td>
+
+                            <td>{{ date('d/m/Y', strtotime($post->created_at)) }}</td>
                         </tr>
                         @endif
                         @endforeach

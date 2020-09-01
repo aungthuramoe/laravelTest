@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Contracts\Services\Post\PostServiceInterface;
-use App\Exports\PostImport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\DB;
-
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
 
 class PostsController extends Controller
 {
@@ -32,13 +27,9 @@ class PostsController extends Controller
      */
     public function index()
     {
-        // $posts = Post::all();
-        // return view('posts.posts', [
-        //     "posts" => $posts
-        // ]);
-        $posts = $this->postInterface->getPostList();
+        $postLists = $this->postInterface->getPostLists();
         return view('posts.posts', [
-            "posts" => $posts
+            "posts" => $postLists
         ]);
     }
 
@@ -59,25 +50,28 @@ class PostsController extends Controller
         return view('posts.post_confirm', compact('data'));
     }
 
-    public function update_confirm(PostRequest $request)
+    public function update_confirm(PostRequest $request, $id)
     {
+        $data['id'] = $id;
         $data['title'] = $request->title;
         $data['description'] = $request->description;
-        return view('posts.post_confirm', compact('data'));
+        if ($request->status) {
+            $data['status'] = 1;
+        } else {
+            $data['status'] = 0;
+        }
+        return view('posts.post_update_confirm', compact('data'));
     }
 
-    public function userPost()
+    public function userPost(Request $request)
     {
-
-        $posts = Post::where('create_user_id', '=', auth()->user()->id)->paginate(5);
+        $posts = $this->postInterface->getUserPost(Auth::user()->type, Auth::id(), $request->q);
+        // if ($posts->count() == 0) {
+        //     return redirect('/posts')->with('message', 'Sorry, Post Not Found');
+        // }
         return view('posts.user_post', [
             "posts" => $posts
         ]);
-        // $posts = $this->postInterface->userPost(auth()->user()->id);
-
-        // return view('posts.user_post', [
-        //     "posts" => $posts
-        // ]);
     }
 
     /**
@@ -86,35 +80,17 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PostRequest $request)
+    public function store(Request $request)
     {
-        switch ($request->input('status')) {
-            case 'create':
-                $title = $request->title;
-                $description = $request->description;
-                $post = new Post;
-                $post->title = $title;
-                $post->description = $description;
-                $post->create_user_id = auth()->user()->id;
-                $post->updated_user_id = auth()->user()->id;
-                $post->save();
-                return redirect('/posts')->with('create', 'Post Create Successfully');
-                break;
-            case 'cancel':
-                return redirect('/posts/create')->withInput();
-                break;
+        if ($request->cancel) {
+            return redirect('/posts/create')->withInput();
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        $isSave = $this->postInterface->savePost($request);
+        if ($isSave) {
+            return redirect('/posts')->with('message', 'Post Create Successfully');
+        } else {
+            return redirect('/posts')->with('error', 'Error occur Creating Post');;
+        }
     }
 
     /**
@@ -126,7 +102,8 @@ class PostsController extends Controller
     public function edit(Request $request, $id)
     {
 
-        $post = Post::find($id);
+        $post = $this->postInterface->editPost($id);
+        $data['id'] = $id;
         $data['title'] = $post->title;
         $data['description'] = $post->description;
         $data['status'] = $post->status;
@@ -140,17 +117,13 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-
-        $post_id = $request->post_id;
-        $post = Post::find($post_id);
-        $post->title = $request->title;
-        $post->description = $request->description;
-        $post->status = 1;
-        $post->update();
-
-        return redirect('/posts')->with('update', 'Update Successfully');
+        if ($request->cancel) {
+            return redirect('/posts/edit/' . $id)->withInput();
+        }
+        $this->postInterface->updatePost($request, $id);
+        return redirect('/posts')->with('message', 'Successfully Update ');
     }
 
     /**
@@ -161,10 +134,8 @@ class PostsController extends Controller
      */
     public function destroy(Request $request)
     {
-        $post_id = $request->post_id;
-        $post = Post::find($post_id);
-        $post->delete();
-        return redirect('/posts')->with('delete', 'Delete Successfully');
+        $this->postInterface->deletePost(Auth::id(), $request->post_id);
+        return redirect('/posts')->with('message', 'Delete Successfully');
     }
     public function upload()
     {
@@ -172,27 +143,16 @@ class PostsController extends Controller
     }
     public function export()
     {
-        return Excel::download(new PostImport, 'posts.xlsx');
+        return $this->postInterface->downloadPost();
     }
-    public function csvfileupload(Request $request)
-    {
-        if ($request->hasFile('csvfile')) {
-            $path = $request->file('csvfile')->getRealPath();
-            //  $data = Excel::import($path)->get();
-            $data = Excel::import(new PostImport, $request->file('csvfile'));
-            foreach ($data as $key => $value) {
-                $arr[] = [
-                    'title' => $value->title,
-                    'description' => $value->address,
-                    'create_user_id' => $value->create_user_id,
-                ];
-            }
-            if (!empty($arr)) {
-                // DB::table('template')->insert($arr);
 
-                return dd($arr);
-            }
-            return dd($data);
+    public function uploadCSV(Request $request)
+    {
+        $isUpload = $this->postInterface->savePostWithCSV($request->file('csvfile'));
+        if ($isUpload) {
+            return redirect('/posts')->with('message', 'Post Create Successfully');
+        } else {
+            return redirect('/posts')->with('error', 'Error occur when import csv data');
         }
     }
 }

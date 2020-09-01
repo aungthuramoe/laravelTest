@@ -13,7 +13,7 @@
                     <div class="row justify-content-center ">
                         <div class="col-lg-9">
                             <div class="p-0">
-                                <form action="{{ url('/users/confirm') }}" method="POST" enctype="multipart/form-data" accept='image/jpeg , image/jpg, image/gif, image/png'>
+                                <form action="{{ url('/users/confirm') }}" method="POST" enctype="multipart/form-data" >
                                     @csrf
                                     <div class="form-group row mt-3">
                                         <label for="name" class="col-sm-3 col-form-label">Name</label>
@@ -55,8 +55,8 @@
                                         <div class="col-sm-9">
                                             <select class="form-control form-control-user" name="user_type" value="{{old('type')}}" id="user_type">
                                                 <option hidden disabled selected value> -- Select User Type -- </option>
-                                                <option value="0" @if (old('user_type')=="M" ) {{ 'selected' }} @endif>Admin</option>
-                                                <option value="1" @if (old('user_type')=="M" ) {{ 'selected' }} @endif>User</option>
+                                                <option value="{{old('type') == 'Admin'?'Admin':'Admin'}}" >Admin</option>
+                                                <option value="{{old('type') == 'User'?'User':'User'}}">User</option>
                                             </select>
                                             @if ($errors->has('user_type'))
                                             <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('user_type') }}</span>
@@ -88,7 +88,7 @@
                                     <div class="form-group row">
                                         <label for="profile_image" class="col-sm-3 col-form-label">Profile Image</label>
                                         <div class="col-sm-9">
-                                            <input id="profile_image" value="{{ old('profile') }}" type="file" class="form-control form-control-user" name="profile">
+                                            <input id="profile_image" value="{{ old('profile') }}" type="file" class="form-control form-control-user" name="profile" accept='image/jpeg , image/jpg, image/gif, image/png'>
                                             @if ($errors->has('profile'))
                                             <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('profile') }}</span>
                                             @endif

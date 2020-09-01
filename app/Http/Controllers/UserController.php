@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Contracts\Services\User\UserServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConfirmPasswordRequest;
 use App\Http\Requests\CreateUserRequest;
-use App\Models\CustomRequest;
-use App\User;
+use App\Http\Requests\UpdateUserRequest;
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -28,9 +30,12 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $userList = $this->userInterface->getUserList();
+        $userList = $this->userInterface->getUserList($request);
+        // if($userList->count() == 0){
+        //     return redirect()->back()->with('error','User Not Found');
+        // }
         return view('users.user', [
             'users' => $userList,
         ]);
@@ -43,8 +48,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = ['Admin','User'];
-        return view('users.create')->with('role',$roles);
+        return view('users.create');
     }
 
     /**
@@ -55,82 +59,41 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        
         switch ($request->input('status')) {
-            
             case 'create':
-                $user = new User();
-                $user->name = $request->name;
-                $user->email = $request->email;
-                $user->password = Hash::make($request->password);
-
-                $user->type = $request->user_type;
-                $user->phone = $request->phone;
-                $user->dob = $request->dob;
-                $user->address = $request->address;
-                $user->profile = "profileImageURL";
-                $user->create_user_id = auth()->user()->id;
-                $user->updated_user_id = auth()->user()->id;
-                $user->deleted_user_id = auth()->user()->id;
-                $user->save();
-
-                return redirect('/users')->with('create', 'User Created Successfully');
-
+                try {
+                    $this->userInterface->saveUser($request);
+                    return redirect('/users')->with('message', 'Successfully User Created ');
+                } catch (QueryException $e) {
+                    return redirect('/users')->with('error', 'Error Creating User');
+                }
                 break;
-
+            case 'update':
+                try {
+                    $this->userInterface->updateUser(Auth::id(), $request);
+                    return redirect('/profile')->with('message', 'Successfully Update');
+                } catch (QueryException $e) {
+                    return redirect('/users')->with('error', 'Error Updating Profile');
+                }
+                break;
             case 'cancel':
                 return redirect('/users/create')->withInput();
                 break;
+            case 'update-cancel':
+                return redirect('/profile/edit')->withInput();
+                break;
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function destroy(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if ($request->user_id == Auth::id()) {
+            return redirect('/users')->with('error', 'You cannot delete yourself');
+        }
+        $this->userInterface->deleteUser(Auth::id(), $request->user_id);
+        return redirect('/users')->with('message', 'Successfully Delete ');
     }
     public function confirm(CreateUserRequest $request)
     {
- 
         $data['name'] = $request->name;
         $data['email'] = $request->email;
         $data['password'] = $request->password;
@@ -138,25 +101,61 @@ class UserController extends Controller
         $data['phone_number'] = $request->phone_number;
         $data['date_of_birth'] = $request->date_of_birth;
         $data['address'] = $request->address;
-        $data['profile'] = auth()->user()->id.'.jpg';
-        // $data['profile'] = $request->profile;
 
         if ($request->hasFile('profile')) {
+            $filename = $request->profile->getClientOriginalName();
+            $data['profile'] = $filename;
             $path = $request->file('profile')->storeAs(
-                'public/images', auth()->user()->id.'.jpg'
+                'public/images',
+                $filename
             );
         }
         return view('users.user_confirm', compact('data'));
     }
-    public function profile()
+    public function updateConfirm(UpdateUserRequest $request)
     {
-        $user = User::find(auth()->user()->id);
-        if ($user->type == 0) {
-            $user->type = "Admin";
-        } else {
-            $user->type = "User";
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = $request->password;
+        $data['type'] = $request->type;
+        $data['phone'] = $request->phone;
+        $data['dob'] = $request->dob;
+        $data['address'] = $request->address;
+        if ($request->hasFile('profile')) {
+            $filename = $request->profile->getClientOriginalName();
+            $data['profile'] = $filename;
+            $path = $request->file('profile')->storeAs(
+                'public/images',
+                $filename
+            );
         }
+        return view('users.user_update_confirm', compact('data'));
+    }
+    public function viewProfile()
+    {
+        $user = $this->userInterface->viewProfile(Auth::id());
         return view('users.profile')->with('data', $user);
     }
-
+    public function changePassword()
+    {
+        return view('users.change_password');
+    }
+    public function editProfile(Request $request)
+    {
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['type'] = $request->user_type;
+        $data['dob'] =  Carbon::parse($request->dob)->format('Y-m-d');
+        $data['address'] = $request->address;
+        $data['phone'] = $request->phone;
+        return view('users.edit_profile', compact('data'));
+    }
+    public function updatePassword(ConfirmPasswordRequest $request)
+    {
+        if ((Hash::check($request->password, Auth::user()->password))) {
+            return back()->with('error', 'current password and new password cannot same');
+        }
+        $this->userInterface->updatePassword(Auth::id(), $request->password);
+        return redirect('/')->with('change_password', "Change Password Successfully");
+    }
 }
