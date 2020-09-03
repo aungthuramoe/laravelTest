@@ -4,6 +4,7 @@ namespace App\Services\User;
 
 use App\Contracts\Dao\User\UserDaoInterface;
 use App\Contracts\Services\User\UserServiceInterface;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,18 +27,14 @@ class UserService implements UserServiceInterface
      * @param Object
      * @return $userList
      */
-    public function getUserList($request)
+    public function getUserList()
     {
-        if ($request->name != null || $request->email != null || $request->from != null || $request->to) {
-            try {
-                $userList = $this->userDao->getSearchUserList($request);
-            } catch (Exception $e) {
-                dd($e);
-                // return redirect('/users')->with('error', 'Please enter correct date format yy-m-d or yy/m/d');
-            }
-        } else {
-            $userList = $this->userDao->getUserList();
-        }
+        $userList = $this->userDao->getUserList();
+        return $userList;
+    }
+    public function getSearchUserList($request)
+    {
+        $userList = $this->userDao->getSearchUserList($request);
         return $userList;
     }
 

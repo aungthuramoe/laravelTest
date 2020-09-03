@@ -1,13 +1,18 @@
 @extends('layouts.app')
 @section('content')
 <div class="container">
-    <!-- Outer Row -->
     <div class="row justify-content-center ">
         <div class="col-xl-10 col-lg-12 col-md-9">
             <div class="card o-hidden  border-0 shadow-lg my-5">
                 <div class="col card-header">
                     <h1 class="display-5 my-2 text-primary text-center">Create Post</h1>
                 </div>
+                @if (session('error'))
+                <div class="alert alert-danger alert-dismissable custom-success-box">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong> {{ session('error') }} </strong>
+                </div>
+                @endif
                 <div class="card-body  p-0">
                     <!-- Nested Row within Card Body -->
                     <div class="row justify-content-center ">
@@ -28,7 +33,8 @@
                                     <div class="form-group row">
                                         <label for="description" class="col-sm-3 col-form-label">Post Description</label>
                                         <div class="col-sm-9">
-                                            <input id="description" type="text" class="form-control form-control-user" name="description" value="{{ old('description') }}" placeholder="Post Description">
+                                            <!-- <input id="description" type="text" class="form-control form-control-user"  value="{{ old('description') }}" placeholder="Post Description"> -->
+                                            <textarea id="description" class="form-control form-control-user rounded-0" name="description" rows="3" placeholder="Post Description">{{ old('description') }}</textarea>
                                             @if ($errors->has('description'))
                                                 <span class="col-sm-12 mb-3 mb-sm-0 text-danger">{{ $errors->first('description') }}</span>
                                             @endif

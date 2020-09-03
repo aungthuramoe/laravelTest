@@ -20,13 +20,22 @@ class UserDao implements UserDaoInterface
     }
     public function getSearchUserList($request)
     {
-        $userList = DB::table('users')
-            ->where('name', '=', $request->name)
-            ->orWhere('email', '=', $request->email)
-            ->orWhere('created_at', '>=', $request->from)
-            ->where('created_at', '<=', $request->to)
-            ->whereNull('deleted_at')
-            ->paginate(5);
+        $userList = User::select('*')
+            ->where(function ($query) use ($request) {
+                if ($request->name != null) {
+                    $query->where('name', '=', $request->name);
+                }
+                if ($request->email != null) {
+                    $query->orWhere('email', '=', $request->email);
+                }
+                if ($request->from != null) {
+                    $query->orWhere("created_at", ">=", $request->from);
+                }
+                if ($request->to != null) {
+                    $query->where("created_at", "<=", $request->to);
+                }
+            })
+            ->paginate(8);
         return $userList;
     }
 
@@ -49,7 +58,7 @@ class UserDao implements UserDaoInterface
         $user->updated_user_id = auth()->user()->id;
         $user->save();
     }
-    public function updateUser($id,$request)
+    public function updateUser($id, $request)
     {
         $user = User::find($id);
         $user->name = $request->name;

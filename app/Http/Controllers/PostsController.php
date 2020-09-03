@@ -63,15 +63,17 @@ class PostsController extends Controller
         return view('posts.post_update_confirm', compact('data'));
     }
 
-    public function userPost(Request $request)
+    public function search(Request $request)
     {
+        if(empty($request->q)){
+            return redirect('/')->withInput()->with("error","please enter search keyword");
+        }
         $posts = $this->postInterface->getUserPost(Auth::user()->type, Auth::id(), $request->q);
-        // if ($posts->count() == 0) {
-        //     return redirect('/posts')->with('message', 'Sorry, Post Not Found');
-        // }
-        return view('posts.user_post', [
-            "posts" => $posts
-        ]);
+        if ($posts->count() == 0) {
+            return redirect()->back()->with('error', 'Sorry, Post Not Found')->withInput();
+        }
+        $data['q'] = $request->q;
+        return view('posts.posts',compact('posts','data'));
     }
 
     /**
@@ -86,11 +88,11 @@ class PostsController extends Controller
             return redirect('/posts/create')->withInput();
         }
         $isSave = $this->postInterface->savePost($request);
-        if ($isSave) {
-            return redirect('/posts')->with('message', 'Post Create Successfully');
-        } else {
-            return redirect('/posts')->with('error', 'Error occur Creating Post');;
+        if (!$isSave) {
+            return redirect('/posts/create')->withInput()->with('error', 'Error occur Creating Post');
+            //return redirect('/posts/create')->with('error', 'Error occur Creating Post');
         }
+        return redirect('/')->with('message', 'Post Create Successfully');
     }
 
     /**
@@ -122,8 +124,11 @@ class PostsController extends Controller
         if ($request->cancel) {
             return redirect('/posts/edit/' . $id)->withInput();
         }
-        $this->postInterface->updatePost($request, $id);
-        return redirect('/posts')->with('message', 'Successfully Update ');
+        $isUpdate = $this->postInterface->updatePost($request, $id);
+        if (!$isUpdate) {
+            return redirect('/')->with('error', 'Error while Updating ');
+        }
+        return redirect('/')->with('message', 'Successfully Update ');
     }
 
     /**
@@ -135,7 +140,7 @@ class PostsController extends Controller
     public function destroy(Request $request)
     {
         $this->postInterface->deletePost(Auth::id(), $request->post_id);
-        return redirect('/posts')->with('message', 'Delete Successfully');
+        return redirect('/')->with('message', 'Delete Successfully');
     }
     public function upload()
     {
@@ -149,10 +154,9 @@ class PostsController extends Controller
     public function uploadCSV(Request $request)
     {
         $isUpload = $this->postInterface->savePostWithCSV($request->file('csvfile'));
-        if ($isUpload) {
-            return redirect('/posts')->with('message', 'Post Create Successfully');
-        } else {
-            return redirect('/posts')->with('error', 'Error occur when import csv data');
+        if (!$isUpload) {
+            return redirect('/')->with('error', 'Error occur when import csv data');
         }
+        return redirect('/')->with('message', 'Post Create Successfully');
     }
 }

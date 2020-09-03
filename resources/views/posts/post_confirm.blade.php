@@ -30,7 +30,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-10 col-lg-4">
-                                <button type="submit" class="btn form-control btn-success text-uppercase">Create Post</i></button>
+                                <button type="submit"  class="btn form-control btn-success text-uppercase">Create Post</i></button>
                             </div>
                         </div>
                     </form>

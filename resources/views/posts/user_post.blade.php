@@ -1,87 +1,88 @@
 @extends('layouts.app')
 
 @section('content')
-
 <section>
     <div class="container mt-5">
-        <div class="card">
-            <div class="card-header">
-                 <strong>My Posts</strong><!--<small class="text-danger ml-5">I need to change some condition</small> -->
+        @if (session('message'))
+        <div class="alert alert-success alert-dismissable custom-success-box">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong> {{ session('message') }} </strong>
+        </div>
+        @endif
+        @if(session()->has('error'))
+        <div class="alert alert-danger alert-dismissable custom-success-box">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong> {{ session('error') }} </strong>
+        </div>
+        @endif
+        <div class="d-flex ">
+            <div class="py-2 flex-grow-1">
+                <form class="form-inline" action="{{ route('search') }}" method="GET">
+                    <div class="col-xs-3">
+                        <input class="form-control" name="q" value="{{old('q')}}" type="search" placeholder="Search">
+                    </div>
+                    <div class="col-xs-4">
+                        <button class="btn btn-outline-primary ml-3" type="submit">Search</button>
+                    </div>
+                </form>
             </div>
-            <div class="card-body">
-                @if (session('message'))
-                <div class="alert alert-success alert-dismissable custom-success-box">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong> {{ session('message') }} </strong>
-                </div>
-                @endif
-                @if(session()->has('error'))
-                <div class="alert alert-danger alert-dismissable custom-success-box">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong> {{ session('error') }} </strong>
-                </div>
-                @endif
-                <div class="row">
-                    <form class="form-inline mb-2" action="{{ route('search') }}" method="GET">
-                        <div class="col-xs-3 ml-3">
-                            <input class="form-control" name="q" type="search" placeholder="Search">
-                        </div>
-                        <div class="col-xs-4">
-                            <button class="btn btn-outline-primary ml-3" type="submit">Search</button>
-                        </div>
-                    </form>
-                    <div class="col-lg-5">
-                        <a href="posts/upload" type="button" class="btn btn-primary float-right">Upload <i class="fa fa-upload"></i></a>
-                    </div>
-                    <div class="col">
-                        <a href="{{ route('export') }}" type="button" class=" btn btn-primary float-right">Download <i class="fa fa-download"></i></a>
-                    </div>
-                    <div class="col">
-                        <a href="posts/create" type="button" class="btn btn-success float-right">Add Post <i class="fa fa-plus fa-lg"></i></a>
-                    </div>
-                </div>
-                <!-- <button class="btn btn-success mb-3 float-right" data-toggle="modal" data-target="#add-post">Add Post <i class="fa fa-plus fa-lg"></i></button> -->
-                <table class="table table-hover table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">Title</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Posted User</th>
-                            <th scope="col">Posted Date</th>
-                            <th class="text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if($posts->count() > 0)
-                        @foreach($posts as $post)
-                        <tr>
-                            <td>{{$post->title}}</td>
-                            <td>{{$post->description}}</td>
-                            <td>{{$post->status}}</td>
-                            <td>{{$post->create_user_id}}</td>
-                            <td>{{ date('d/m/Y', strtotime($post->created_at)) }}</td>
-                            <td class="text-right">
-                                <!-- <button data-id="{{$post->id}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-primary px-3" data-toggle="modal" data-target="#edit-post">Edit <i class="fa fa-edit"></i></button> -->
-                                <button data-id="{{$post->id}}" data-post_date="{{date('d/m/Y', strtotime($post->created_at))}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-primary px-3" data-toggle="modal" data-target="#view-post">View <i class="fa fa-eye"></i></button>
-                                <a href="{{ route('edit',['id'=>$post->id])}}" class="btn btn-primary">Edit <i class="fa fa-edit"></i></a>
-                                <button data-id="{{$post->id}}" class="btn btn-danger" data-toggle="modal" data-target="#delete-post"> Delete <i class="fa fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        @endforeach
-                        @else
-                        <h5 class="text-danger">Post not found</h5>
-                        @endif
-                    </tbody>
-                </table>
-                <div class="d-flex justify-content-center">
-                    {!! $posts->links() !!}
-                </div>
+            <div class="py-2">
+                <a href="posts/upload" type="button" class="btn btn-primary float-right d-none d-md-block">
+                    Upload <i class="fa fa-upload"></i>
+                </a>
+            </div>
+            <div class="p-2">
+                <a href="{{ route('export') }}" type="button" class=" btn btn-primary float-right d-none d-md-block">
+                    Download <i class="fa fa-download"></i>
+                </a>
+            </div>
+            <div class="py-2">
+                <a href="posts/create" type="button" class="btn btn-success float-right d-none d-md-block">
+                    Add Post <i class="fa fa-plus fa-lg"></i>
+                </a>
+            </div>
+        </div>
+        <!-- <button class="btn btn-success mb-3 float-right" data-toggle="modal" data-target="#add-post">Add Post <i class="fa fa-plus fa-lg"></i></button> -->
+        <div class="table-responsive-sm table-responsive-lg table-responsive-xl">
+            <table class="table table-hover table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Posted User</th>
+                        <th scope="col">Posted Date</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if($posts->count() > 0)
+                    @foreach($posts as $post)
+                    <tr>
+                        <td>{{$post->title}}</td>
+                        <td>{{$post->description}}</td>
+                        <td>{{$post->status}}</td>
+                        <td>{{$post->create_user_id}}</td>
+                        <td>{{ date('Y/m/d', strtotime($post->created_at)) }}</td>
+                        <td class="text-right">
+                            <button data-id="{{$post->id}}" data-post_date="{{date('d/m/Y', strtotime($post->created_at))}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-sm btn-primary px-3" data-toggle="modal" data-target="#view-post">View <i class="fa fa-eye"></i></button>
+                            <a href="{{ route('edit',['id'=>$post->id])}}" class="btn btn-sm btn-primary">Edit <i class="fa fa-edit"></i></a>
+                            <button data-id="{{$post->id}}" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-post"> Delete <i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    @endforeach
+                    @else
+                    <h5 class="text-danger">Post not found</h5>
+                    @endif
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+                {!! $posts->links() !!}
             </div>
         </div>
 
     </div>
-    <div class="modal" id="add-post" tabindex="-1">
+    <!-- <div class="modal" id="add-post" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -109,7 +110,7 @@
 
             </form>
         </div>
-    </div>
+    </div> -->
     <!-- <div class="modal" id="edit-post" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -200,7 +201,6 @@
     </div>
     @endsection
     @push('scripts')
-
     <script>
         // $('#edit-post').on('show.bs.modal', function(event) {
         //     var button = $(event.relatedTarget)

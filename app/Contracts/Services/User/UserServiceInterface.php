@@ -5,7 +5,8 @@ namespace App\Contracts\Services\User;
 interface UserServiceInterface
 {
   //get user list
-  public function getUserList($request);
+  public function getUserList();
+  public function getSearchUserList($request);
   public function saveUser($request);
   public function updateUser($id,$request);
   public function deleteUser($adminID,$userID);

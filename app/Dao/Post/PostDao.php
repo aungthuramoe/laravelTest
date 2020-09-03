@@ -16,7 +16,7 @@ class PostDao implements PostDaoInterface
      */
     public function getPostLists()
     {
-        return Post::latest()->paginate(10);
+        return Post::latest()->paginate(8);
     }
     public function getUserPost($id)
     {

@@ -34,16 +34,16 @@
                     <a class="nav-link text-white" href="{{ route('profile') }}">Profile</a>
                 </li>
                 @can('isAdmin')
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link text-white" href="{{ url('posts') }}">Posts</a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ url('users') }}">Users</a>
                 </li>
                 @else
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link text-white" href="{{ url('posts') }}">My Posts</a>
-                </li>
+                </li> -->
                 @endcan
 
                 <li class="nav-item dropdown">

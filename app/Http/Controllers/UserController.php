@@ -32,15 +32,41 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $userList = $this->userInterface->getUserList($request);
-        // if($userList->count() == 0){
-        //     return redirect()->back()->with('error','User Not Found');
-        // }
+        $userList = $this->userInterface->getUserList();
+        // if (empty($request->all())) {
+        $userList = $this->userInterface->getUserList();
         return view('users.user', [
             'users' => $userList,
         ]);
+        // } else {
+        //     if (empty($request->name) && empty($request->email) && empty($request->from) && empty($request->to)) {
+        //         return redirect('/users')->with("error", "Please fill at least one field");
+        //     }
+        //     $users = $this->userInterface->getSearchUserList($request);
+        //     if($request->name){
+        //         dd($request->name);
+        //     }
+        //     if ($userList->count() == 0) {
+        //         return redirect()->back()->withInput()->with('error', 'User Not Found');
+        //     }
+        //     return view('users.user',compact('users','data'));
+        // }
     }
-
+    public function search(Request $request)
+    {
+        if (empty($request->name) && empty($request->email) && empty($request->from) && empty($request->to)) {
+            return redirect()->back()->with("error", "Please fill at least one field");
+        }
+        $users = $this->userInterface->getSearchUserList($request);
+        if ($users->count() == 0) {
+            return redirect()->back()->withInput()->with('error', 'User Not Found');
+        }
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['from'] =  Carbon::parse($request->from)->format('Y-m-d');
+        $data['to'] = Carbon::parse($request->to)->format('Y-m-d');
+        return view('users.user', compact('users', 'data'));
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -98,8 +124,8 @@ class UserController extends Controller
         $data['email'] = $request->email;
         $data['password'] = $request->password;
         $data['user_type'] = $request->user_type;
-        $data['phone_number'] = $request->phone_number;
-        $data['date_of_birth'] = $request->date_of_birth;
+        $data['phone_number'] = $request->phone;
+        $data['date_of_birth'] = $request->dob;
         $data['address'] = $request->address;
 
         if ($request->hasFile('profile')) {

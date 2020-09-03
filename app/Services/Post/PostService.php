@@ -4,6 +4,7 @@ namespace App\Services\Post;
 
 use App\Contracts\Dao\Post\PostDaoInterface;
 use App\Contracts\Services\Post\PostServiceInterface;
+use Exception;
 use Illuminate\Database\QueryException;
 
 class PostService implements PostServiceInterface
@@ -56,23 +57,21 @@ class PostService implements PostServiceInterface
     }
     public function savePost($request)
     {
-        switch ($request->input('status')) {
-            case 'create':
-                try {
-                    $this->postDao->savePost($request);
-                    return true;
-                } catch (QueryException $e) {
-                    return false;
-                }
-                break;
-            case 'cancel':
-                return redirect()->back()->withInput();
-                break;
+        try {
+            $this->postDao->savePost($request);
+            return true;
+        } catch (QueryException $e) {
+            return false;
         }
     }
-    public function updatePost($request,$id)
+    public function updatePost($request, $id)
     {
-        $this->postDao->updatePost($request,$id);
+        try {
+            $this->postDao->updatePost($request, $id);
+            return true;
+        } catch (QueryException $e) {
+            return false;
+        }
     }
     public function savePostWithCSV($uploadCSVFile)
     {

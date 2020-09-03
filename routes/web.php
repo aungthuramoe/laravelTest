@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/', 'PostsController@index');
-Route::get('/posts', 'PostsController@userPost')->name('search');
+Route::post('/', 'PostsController@search')->name('search');
 Route::get('/posts/create', 'PostsController@create');
 Route::get('/posts/edit/{id}', 'PostsController@edit')->name('edit');
 Route::post('/posts/confirm', 'PostsController@confirm')->name('confirm');
@@ -45,7 +45,8 @@ Route::get('/profile/change-password', 'UserController@changePassword')->name('c
 Route::post('/profile/update-password', 'UserController@updatePassword')->name('update-password');
 
 Route::group(['middleware' => ['auth', 'admin']], function () {
-    Route::get('/users', 'UserController@index')->name('user-search');
+    Route::get('/users', 'UserController@index');
+    Route::post('/users', 'UserController@search')->name('user-search');
     Route::get('/users/create', 'UserController@create');
     Route::post('/users/confirm', 'UserController@confirm');
     Route::post('/users/store', 'UserController@store')->name('store');
