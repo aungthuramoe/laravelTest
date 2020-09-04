@@ -7,6 +7,12 @@
                 <div class="col card-header">
                     <h1 class="display-5 my-2 text-primary text-center">Create User</h1>
                 </div>
+                @if (session('error'))
+                 <div class="alert alert-danger alert-dismissable custom-success-box">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong> {{ session('error') }} </strong>
+                </div>
+                @endif
                 <div class="card-body  p-0">
                     <div class="row justify-content-center ">
                         <div class="col-lg-9">
@@ -127,13 +133,13 @@
             reader.readAsDataURL(input.files[0]);
             console.log("click open");
         } else {
-            $('#profile_image').val(localStorage.getItem("file"));
-            console.log("profile value is ",$('#profile_image').val());
+            //$('#profile_image').val(localStorage.getItem("file"));
+            console.log("profile value is ", $('#profile_image').val());
             //console.log(localStorage.getItem("file"));
             // $('#profile_image').val(localStorage.getItem("file"));
             //console.log(localStorage.getItem("filename"));
             //$(this).next('.custom-file-label').html(localStorage.getItem("filename"));
-            // $('#profile_image-tag').attr('src', '');
+            $('#profile_image-tag').attr('src', '');
         }
     }
     $("#profile_image").change(function() {

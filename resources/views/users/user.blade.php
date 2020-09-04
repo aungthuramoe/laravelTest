@@ -19,23 +19,21 @@
             <form class="form-inline mb-3" action="{{url('/users')}}" method="POST">
                 @csrf
                 <div class="col-xs-2 ml-3">
-                    <input class="form-control" id='name' name="name" type="text" value="@if(isset($data['name'])) {{$data['name']}} @endif" placeholder="Search By Name">
+                    <input class="form-control" id='name' name="name" type="text" value="@if (isset($data['name'])) {{$data['name']}} @endif" placeholder="Search By Name">
                 </div>
                 <div class="col-xs-2 ml-3">
-                    <input class="form-control" name="email" type="text" value="@if(isset($data['email'])) {{$data['email']}} @endif" placeholder="Search By Email">
+                    <input class="form-control" name="email" type="text" value="@if (isset($data['email'])) {{$data['email']}} @endif" placeholder="Search By Email">
                 </div>
                 <div class="col-xs-2 ml-3">
-                    <input class="form-control" id="from" name="from" type="date" value="@if(isset($data['from'])) {{$data['from']}} @endif">
+                    <input class="form-control" id="from" name="from" type="date" value="@if (isset($data['from'])){{$data['from']}}@endif">
                 </div>
                 <div class="col-xs-2 ml-3">
-                    <input class="form-control" name="to" type="date" value="@if(isset($data['to'])) $data['to'] @else no data @endif">
+                    <input class="form-control" id="to" name="to" type="date" value="@if (isset($data['to'])){{$data['to']}}@else @endif">
                 </div>
                 <div class="col-xs-4">
                     <button class="btn btn-outline-primary my-2 ml-2 my-sm-0" type="submit">Search</button>
                 </div>
-               
             </form>
-           
             <div class="col">
                 <a href="users/create" type="button" class="btn btn-success float-right"><i class="fa fa-user-plus"></i></a>
             </div>
@@ -43,7 +41,7 @@
         <div class="table-responsive-sm table-responsive-lg table-responsive-xl">
             <table class="table table-hover table-bordered text-center">
                 <thead class="thead-dark">
-                   
+
                     <tr class="d-flex">
                         <th class="col-2">Name</th>
                         <th class="col-2">Email</th>

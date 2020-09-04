@@ -57,7 +57,9 @@
                     <tr>
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
+                        @if(Auth()->check())
                         <th scope="col">Status</th>
+                        @endif
                         <th scope="col">Posted User</th>
                         <th scope="col">Posted Date</th>
                         @if(Auth()->check())
@@ -70,7 +72,9 @@
                     <tr>
                         <td>{{$post->title}}</td>
                         <td>{{$post->description}}</td>
+                        @if(Auth()->check())
                         <td>{{$post->status}}</td>
+                        @endif
                         <td>{{$post->create_user_id}}</td>
                         <td>{{ date('Y/m/d', strtotime($post->created_at)) }}</td>
                         @if(Auth()->check())
@@ -84,8 +88,8 @@
                         @if(Auth()->id() === $post->create_user_id)
                         <td class="text-right">
                             <button data-id="{{$post->id}}" data-post_date="{{date('d/m/Y', strtotime($post->created_at))}}" data-title="{{$post->title}}" data-description="{{$post->description}}" class="btn btn-sm btn-primary px-3" data-toggle="modal" data-target="#view-post">View <i class="fa fa-eye"></i></button>
-                            <a href="{{ route('edit',['id'=>$post->id])}}" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
-                            <button data-id="{{$post->id}}" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-post"> <i class="fa fa-trash"></i></button>
+                            <a href="{{ route('edit',['id'=>$post->id])}}" class="btn btn-sm btn-primary">Edit<i class="fa fa-edit"></i></a>
+                            <button data-id="{{$post->id}}" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-post">Delete <i class="fa fa-trash"></i></button>
                         </td>
                         @endif
                         @endcan

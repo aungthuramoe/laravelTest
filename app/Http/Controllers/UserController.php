@@ -64,7 +64,7 @@ class UserController extends Controller
         $data['name'] = $request->name;
         $data['email'] = $request->email;
         $data['from'] =  Carbon::parse($request->from)->format('Y-m-d');
-        $data['to'] = Carbon::parse($request->to)->format('Y-m-d');
+        $data['to'] =  Carbon::parse($request->to)->format('Y-m-d');
         return view('users.user', compact('users', 'data'));
     }
     /**
@@ -91,7 +91,8 @@ class UserController extends Controller
                     $this->userInterface->saveUser($request);
                     return redirect('/users')->with('message', 'Successfully User Created ');
                 } catch (QueryException $e) {
-                    return redirect('/users')->with('error', 'Error Creating User');
+                    // return redirect('/users')->with('error', 'Error Creating User');
+                    return redirect('/users/create')->withInput()->with('error', 'Error Creating User');
                 }
                 break;
             case 'update':
