@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -183,6 +184,6 @@ class UserController extends Controller
             return back()->with('error', 'current password and new password cannot same');
         }
         $this->userInterface->updatePassword(Auth::id(), $request->password);
-        return redirect('/')->with('change_password', "Change Password Successfully");
+        return redirect('/')->with('message', "Change Password Successfully");
     }
 }

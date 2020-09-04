@@ -3,24 +3,7 @@
 @section('content')
 <section>
     <div class="container mt-5">
-        @if (session('change_password'))
-        <div class="alert alert-success alert-dismissable custom-success-box">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong> {{ session('change_password') }} </strong>
-        </div>
-        @endif
-        @if (session('message'))
-        <div class="alert alert-success alert-dismissable custom-success-box">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong> {{ session('message') }} </strong>
-        </div>
-        @endif
-        @if(session()->has('error'))
-        <div class="alert alert-danger alert-dismissable custom-success-box">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong> {{ session('error') }} </strong>
-        </div>
-        @endif
+       <x-alert />
         @if(Auth()->check())
         <div class="d-flex ">
             <div class="py-2 flex-grow-1">

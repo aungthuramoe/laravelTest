@@ -7,12 +7,7 @@
                 <div class="col card-header">
                     <h1 class="display-5 my-2 text-primary text-center">Create Post</h1>
                 </div>
-                @if (session('error'))
-                <div class="alert alert-danger alert-dismissable custom-success-box">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong> {{ session('error') }} </strong>
-                </div>
-                @endif
+                <x-alert />
                 <div class="card-body  p-0">
                     <!-- Nested Row within Card Body -->
                     <div class="row justify-content-center ">
