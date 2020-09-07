@@ -5,7 +5,7 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-header text-center">
-                <strong>User Profile</strong>
+                <strong class="text-primary">User Profile</strong>
             </div>
             <div class="card-body ml-5">
                 <form action="{{route('edit-profile')}}" method="POST">
@@ -54,7 +54,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-10 col-lg-4">
-                            <button type="submit" class="btn form-control btn-primary text-uppercase">Edit</button>
+                            <button class="btn btn-block btn-primary text-uppercase" type="submit">Edit</button>
                         </div>
                     </div>
                 </form>

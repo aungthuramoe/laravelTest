@@ -97,8 +97,9 @@
                                             <img id="profile_image-tag" class="mt-2" width="150px" />
                                         </div>
                                     </div>
-                                    <button type="submit" class="col-sm-12 col-lg-12 btn btn-success text-uppercase btn-block">Confirm</button>
-                                    <button type="reset" class="col-sm-12 col-lg-12 btn btn-primary text-uppercase btn-block mb-3">Clear</button>
+                                        <button type="submit" class="col-sm-12 col-md-12 btn btn-success text-uppercase btn-block">Confirm</button>
+                                        <button type="reset" class="col-sm-12 col-md-12 btn btn-dark text-uppercase btn-block mb-3">Clear</button>
+
                                 </form>
 
 

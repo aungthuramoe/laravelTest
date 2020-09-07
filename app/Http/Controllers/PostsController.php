@@ -8,18 +8,28 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * SystemName : Bulletinboard
+ * ModuleName : Post
+ */
 class PostsController extends Controller
 {
+    /**
+     * The post service interface instance.
+     */
     private $postInterface;
+    
     /**
      * Create a new controller instance.
      *
+     * @param  PostServiceInterface  $postInterface
      * @return void
      */
     public function __construct(PostServiceInterface $postInterface)
     {
         $this->postInterface = $postInterface;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -43,6 +53,12 @@ class PostsController extends Controller
         return view('posts.post_create');
     }
 
+    /**
+     * Show creating form for creating a new post.
+     *
+     * @param App\Http\Requests\PostRequest $request;
+     * @return \Illuminate\Http\Response
+     */
     public function confirm(PostRequest $request)
     {
         $data['title'] = $request->title;
@@ -50,6 +66,13 @@ class PostsController extends Controller
         return view('posts.post_confirm', compact('data'));
     }
 
+    /**
+     * Show conifrmation form to  update
+     * 
+     * @param App\Http\Requests\PostRequest $request;
+     * @param int $id 
+     * @return  \Illuminate\Http\Response
+     */
     public function update_confirm(PostRequest $request, $id)
     {
         $data['id'] = $id;
@@ -63,21 +86,28 @@ class PostsController extends Controller
         return view('posts.post_update_confirm', compact('data'));
     }
 
+    /**
+     * Searching  Post
+     * 
+     * @param App\Http\Requests\PostRequest $request;
+     * @return \Illuminate\Http\Response
+     * 
+     */
     public function search(Request $request)
     {
-        if(empty($request->q)){
-            return redirect('/')->withInput()->with("error","please enter search keyword");
+        if (empty($request->q)) {
+            return redirect('/')->withInput()->with("error", "please enter search keyword");
         }
         $posts = $this->postInterface->getUserPost(Auth::user()->type, Auth::id(), $request->q);
         if ($posts->count() == 0) {
             return redirect()->back()->with('error', 'Sorry, Post Not Found')->withInput();
         }
         $data['q'] = $request->q;
-        return view('posts.posts',compact('posts','data'));
+        return view('posts.posts', compact('posts', 'data'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created post in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -96,14 +126,13 @@ class PostsController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified post.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, $id)
     {
-
         $post = $this->postInterface->editPost($id);
         $data['id'] = $id;
         $data['title'] = $post->title;
@@ -113,7 +142,7 @@ class PostsController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified post in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -134,7 +163,7 @@ class PostsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request)
@@ -142,15 +171,33 @@ class PostsController extends Controller
         $this->postInterface->deletePost(Auth::id(), $request->post_id);
         return redirect('/')->with('message', 'Delete Successfully');
     }
+
+    /**
+     * Show the form for creating a new post.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function upload()
     {
         return view('posts.upload_csv');
     }
+
+    /**
+     *Download Post with xlsx extension
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function export()
     {
         return $this->postInterface->downloadPost();
     }
 
+    /**
+     *Upload Post with CSV
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function uploadCSV(Request $request)
     {
         $isUpload = $this->postInterface->savePostWithCSV($request->file('csvfile'));

@@ -36,10 +36,10 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col">
-                                            <button class="btn btn-primary form-control  btn-block" type="reset">Clear</button></div>
-                                        <div class="col">
-                                            <button class="btn btn-success form-control btn-block" type="submit">Confirm</button></div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-dark form-control  btn-block" type="reset">Clear</button></div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-success form-control btn-block active" type="submit">Confirm</button></div>
                                     </div>
 
                                 </form>

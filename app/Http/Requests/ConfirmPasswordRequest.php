@@ -30,6 +30,12 @@ class ConfirmPasswordRequest extends FormRequest
             
         ];
     }
+
+     /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [ 
@@ -38,6 +44,7 @@ class ConfirmPasswordRequest extends FormRequest
             'password.regex' => 'password must be include one uppercase,one digit and one lower case'
         ];
     }
+    
     public function withValidator($validator)
     {
         // checks user current password

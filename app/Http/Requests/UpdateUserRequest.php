@@ -33,6 +33,12 @@ class UpdateUserRequest extends FormRequest
             'profile' => 'required | max:2048'
         ];
     }
+
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

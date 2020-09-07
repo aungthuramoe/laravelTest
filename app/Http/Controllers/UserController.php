@@ -12,47 +12,49 @@ use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
+
+/**
+ * SystemName : Bulletinboard
+ * ModuleName : User
+ */
 class UserController extends Controller
 {
+    /**
+     * The user service interface instance.
+     */
     private $userInterface;
     /**
      * Create a new controller instance.
      *
+     * @param UserServiceInterface $userInterface
      * @return void
      */
     public function __construct(UserServiceInterface $userInterface)
     {
         $this->userInterface = $userInterface;
     }
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of the user.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         $userList = $this->userInterface->getUserList();
-        // if (empty($request->all())) {
         $userList = $this->userInterface->getUserList();
         return view('users.user', [
             'users' => $userList,
         ]);
-        // } else {
-        //     if (empty($request->name) && empty($request->email) && empty($request->from) && empty($request->to)) {
-        //         return redirect('/users')->with("error", "Please fill at least one field");
-        //     }
-        //     $users = $this->userInterface->getSearchUserList($request);
-        //     if($request->name){
-        //         dd($request->name);
-        //     }
-        //     if ($userList->count() == 0) {
-        //         return redirect()->back()->withInput()->with('error', 'User Not Found');
-        //     }
-        //     return view('users.user',compact('users','data'));
-        // }
     }
+    /**
+     * Search User
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function search(Request $request)
     {
         if (empty($request->name) && empty($request->email) && empty($request->from) && empty($request->to)) {
@@ -69,7 +71,7 @@ class UserController extends Controller
         return view('users.user', compact('users', 'data'));
     }
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating and updating user.
      *
      * @return \Illuminate\Http\Response
      */
@@ -79,7 +81,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created user in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -92,7 +94,6 @@ class UserController extends Controller
                     $this->userInterface->saveUser($request);
                     return redirect('/users')->with('message', 'Successfully User Created ');
                 } catch (QueryException $e) {
-                    // return redirect('/users')->with('error', 'Error Creating User');
                     return redirect('/users/create')->withInput()->with('error', 'Error Creating User');
                 }
                 break;
@@ -112,6 +113,13 @@ class UserController extends Controller
                 break;
         }
     }
+
+    /**
+     * Remove the specified user from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function destroy(Request $request)
     {
         if ($request->user_id == Auth::id()) {
@@ -120,6 +128,12 @@ class UserController extends Controller
         $this->userInterface->deleteUser(Auth::id(), $request->user_id);
         return redirect('/users')->with('message', 'Successfully Delete ');
     }
+    /**
+     * Show  conifrmation form to  create
+     *
+     * @param App\Http\Requests\CreateUserRequest $request
+     * @return \Illuminate\Http\Response
+     */
     public function confirm(CreateUserRequest $request)
     {
         $data['name'] = $request->name;
@@ -140,6 +154,13 @@ class UserController extends Controller
         }
         return view('users.user_confirm', compact('data'));
     }
+
+    /**
+     * Show conifrmation form to  update
+     * 
+     * @param  App\Http\Requests\UpdateUserRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function updateConfirm(UpdateUserRequest $request)
     {
         $data['name'] = $request->name;
@@ -159,15 +180,34 @@ class UserController extends Controller
         }
         return view('users.user_update_confirm', compact('data'));
     }
+
+    /**
+     * Show Profile Information
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function viewProfile()
     {
         $user = $this->userInterface->viewProfile(Auth::id());
         return view('users.profile')->with('data', $user);
     }
+
+    /**
+     * Change Password
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function changePassword()
     {
         return view('users.change_password');
     }
+
+    /**
+     * Edit Profile Information
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
     public function editProfile(Request $request)
     {
         $data['name'] = $request->name;
@@ -178,6 +218,14 @@ class UserController extends Controller
         $data['phone'] = $request->phone;
         return view('users.edit_profile', compact('data'));
     }
+
+    
+     /**
+     * Show Profile Information
+     * 
+     * @return App\Http\Requests\ConfirmPasswordRequest $request
+     * @return \Illuminate\Http\Response
+     */
     public function updatePassword(ConfirmPasswordRequest $request)
     {
         if ((Hash::check($request->password, Auth::user()->password))) {

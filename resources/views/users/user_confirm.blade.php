@@ -59,13 +59,13 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-sm-10 col-lg-8">
-                            <button type="submit" value="cancel" name="status" class="btn btn-primary  form-control text-uppercase">Cancel</button>
+                        <div class="col-sm-10 col-md-4">
+                            <button type="submit" value="create" name="status" class="btn form-control btn-success text-uppercase active">Create</button>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-sm-10 col-lg-8">
-                            <button type="submit" value="create" name="status" class="btn form-control btn-success text-uppercase">Create</button>
+                        <div class="col-sm-10 col-md-4">
+                            <button type="submit" value="cancel" name="status" class="btn btn-dark  form-control text-uppercase">Cancel</button>
                         </div>
                     </div>
                 </form>

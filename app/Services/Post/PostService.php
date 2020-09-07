@@ -4,17 +4,24 @@ namespace App\Services\Post;
 
 use App\Contracts\Dao\Post\PostDaoInterface;
 use App\Contracts\Services\Post\PostServiceInterface;
-use Exception;
 use Illuminate\Database\QueryException;
 
+/**
+ * System Name : Bollentine Board
+ * Module Name : PostServie
+ */
 class PostService implements PostServiceInterface
 {
+    /**
+     * The post dao interface instance.
+     */
     private $postDao;
 
     /**
      * Class Constructor
-     * @param OperatorUserDaoInterface
-     * @return
+     * 
+     * @param PostDaoInterface $postDao
+     * @return void
      */
     public function __construct(PostDaoInterface $postDao)
     {
@@ -23,13 +30,19 @@ class PostService implements PostServiceInterface
 
     /**
      * Get User List
-     * @param Object
-     * @return $userList
+     * 
+     * @return $posts
      */
     public function getPostLists()
     {
         return $this->postDao->getPostLists();
     }
+
+    /**
+     * Get PostList
+     * 
+     * @return $posts
+     */
     public function getUserPost($type, $id, $query)
     {
         if ($type == 0) {
@@ -47,14 +60,36 @@ class PostService implements PostServiceInterface
         }
         return $posts;
     }
+
+    /**
+     * Get the specified post data.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function editPost($id)
     {
         return $this->postDao->editPost($id);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $userID
+     * @param  int  $postID
+     * @return \Illuminate\Http\Response
+     */
     public function deletePost($userID, $postID)
     {
         return $this->postDao->deletePost($userID, $postID);
     }
+
+    /**
+     * Store a newly created post in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
     public function savePost($request)
     {
         try {
@@ -64,6 +99,14 @@ class PostService implements PostServiceInterface
             return false;
         }
     }
+
+    /**
+     * Update the specified post in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return bool
+     */
     public function updatePost($request, $id)
     {
         try {
@@ -73,6 +116,13 @@ class PostService implements PostServiceInterface
             return false;
         }
     }
+
+    /**
+     * Update the specified post in storage.
+     *
+     * @param  \Illuminate\Http\Request  $uploadCSVFile
+     * @return bool
+     */
     public function savePostWithCSV($uploadCSVFile)
     {
         if ($uploadCSVFile) {
@@ -84,6 +134,12 @@ class PostService implements PostServiceInterface
             }
         }
     }
+
+    /**
+     * Download post
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function downloadPost()
     {
         return $this->postDao->downloadPost();

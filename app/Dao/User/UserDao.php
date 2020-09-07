@@ -9,14 +9,21 @@ use Illuminate\Support\Facades\Hash;
 class UserDao implements UserDaoInterface
 {
     /**
-     * Get Operator List
-     * @param Object
-     * @return $operatorList
+     * Get getUserList List
+     * 
+     * @return $userList
      */
     public function getUserList()
     {
         return User::latest()->paginate(8);
     }
+
+    /**
+     * Get Search User List
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return $userList 
+     */
     public function getSearchUserList($request)
     {
         $userList = User::select('*')
@@ -38,6 +45,12 @@ class UserDao implements UserDaoInterface
         return $userList;
     }
 
+    /**
+     * Create User
+     * 
+     * @param \Illuminate\Http\Request
+     * @return void
+     */
     public function saveUser($request)
     {
         $user = new User();
@@ -57,6 +70,14 @@ class UserDao implements UserDaoInterface
         $user->updated_user_id = auth()->user()->id;
         $user->save();
     }
+
+    /**
+     * Update User
+     * 
+     * @param $id
+     * @param \Illuminate\Http\Request $request
+     * @return void
+     */
     public function updateUser($id, $request)
     {
         $user = User::find($id);
@@ -75,6 +96,14 @@ class UserDao implements UserDaoInterface
         $user->updated_user_id = auth()->user()->id;
         $user->save();
     }
+
+     /**
+     * Delete User
+     * 
+     * @param $adminID
+     * @param $userID
+     * @return void
+     */
     public function deleteUser($adminID, $userID)
     {
         $user = User::find($userID);
@@ -82,6 +111,13 @@ class UserDao implements UserDaoInterface
         $user->deleted_at = now();
         $user->save();
     }
+
+    /**
+     * View Profile
+     * 
+     * @param $id
+     * @return $user
+     */
     public function viewProfile($id)
     {
         $user = User::find($id);
@@ -92,6 +128,14 @@ class UserDao implements UserDaoInterface
         }
         return $user;
     }
+
+    /**
+     *Update Password
+     * 
+     * @param $id
+     * @param $password
+     * @return void
+     */
     public function updatePassword($id, $password)
     {
         $user = User::find($id);

@@ -13,7 +13,7 @@
                         <input class="form-control" name="q" value="@if(isset($data['q'])) {{$data['q']}} @endif" type="search" placeholder="Search">
                     </div>
                     <div class="col-xs-4">
-                        <button class="btn btn-outline-primary ml-3" type="submit">Search</button>
+                        <button class="btn btn-outline-primary ml-3 active" type="submit">Search</button>
                     </div>
                 </form>
             </div>

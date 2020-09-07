@@ -20,7 +20,7 @@
                     <input class="form-control" id="to" name="to" type="date" value="@if (isset($data['to'])){{$data['to']}}@else @endif">
                 </div>
                 <div class="col-xs-4">
-                    <button class="btn btn-outline-primary my-2 ml-2 my-sm-0" type="submit">Search</button>
+                    <button class="btn btn-outline-primary my-2 ml-2 my-sm-0 active" type="submit">Search</button>
                 </div>
             </form>
             <div class="col">

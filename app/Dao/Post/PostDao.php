@@ -12,16 +12,33 @@ class PostDao implements PostDaoInterface
 {
     /**
      * Get Post List
+     * 
      * @return $postList
      */
     public function getPostLists()
     {
         return Post::latest()->paginate(8);
     }
+    
+     /**
+     * Get User Post List
+     * 
+     * @param int $id
+     * 
+     * @return $postList
+     */
     public function getUserPost($id)
     {
         return Post::where('create_user_id', '=', $id)->paginate(2);
     }
+
+    /**
+     * Get Search Post List
+     * 
+     * @param int $id
+     * @param string $query
+     * @return $posts
+     */
     public function getUserSearch($query, $id)
     {
         $posts = Post::query()
@@ -31,6 +48,14 @@ class PostDao implements PostDaoInterface
             ->paginate(5);
         return $posts;
     }
+
+    /**
+     * Get Search Post List
+     * 
+     * @param string $query
+     * 
+     * @return $posts
+     */
     public function getAdminSearch($query)
     {
         $posts = Post::query()
@@ -41,10 +66,24 @@ class PostDao implements PostDaoInterface
         return $posts;
     }
 
+     /**
+     *  Get the specified post data.
+     * 
+     * @param int $id
+     * @return $post
+     */
     public function editPost($id)
     {
         return  Post::find($id);
     }
+
+    /**
+     * Post Delete
+     * 
+     * @param $userID
+     * @param $postID
+     * @return void
+     */
     public function deletePost($userID, $postID)
     {
         $post = Post::find($postID);
@@ -52,6 +91,13 @@ class PostDao implements PostDaoInterface
         $post->save();
         $post->delete();
     }
+
+    /**
+     * Storing Post into Database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
     public function savePost($request)
     {
         $post = new Post;
@@ -61,20 +107,39 @@ class PostDao implements PostDaoInterface
         $post->updated_user_id = auth()->user()->id;
         $post->save();
     }
+
+      /**
+     * Update Post 
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param int $id
+     * @return void
+     */
     public function updatePost($request,$id)
     {
         $post = Post::find($id);
         $post->title = $request->title;
         $post->description = $request->description;
         $post->status = $request->status;
-        
         $post->update();
     }
+
+     /**
+     * Save Post with CSV 
+     *
+     * @param  \Illuminate\Http\Request  $uploadCSVFile
+     * @return void
+     */
     public function savePostWithCSV($uploadCSVFile)
     {
         Excel::import(new PostImport, $uploadCSVFile);
     }
 
+    /**
+     * Download Post with Xlsx extension
+     *
+     * @return posts.xlsx file
+     */
     public function downloadPost()  
     {
         return Excel::download(new PostExport, 'posts.xlsx');
