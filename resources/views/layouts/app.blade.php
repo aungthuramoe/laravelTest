@@ -66,7 +66,7 @@
             </li>
         </ul>
     </div> -->
-    <div id="app" class="c-body">
+    <div id="app" class="c-body c-app align-items-center">
         @include('includes.navbar')
         <main class="py-4 c-main">
             @yield('content')

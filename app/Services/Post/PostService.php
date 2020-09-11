@@ -62,7 +62,7 @@ class PostService implements PostServiceInterface
     }
 
     /**
-     * Get the specified post data.
+     * Get the specified post data to edit
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -73,7 +73,7 @@ class PostService implements PostServiceInterface
     }
 
     /**
-     * Remove the specified resource from storage.
+     * delete the specified post with delete user id.
      *
      * @param  int  $userID
      * @param  int  $postID
@@ -85,7 +85,7 @@ class PostService implements PostServiceInterface
     }
 
     /**
-     * Store a newly created post in storage.
+     * Store a newly created post in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return bool

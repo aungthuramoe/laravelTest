@@ -6,19 +6,20 @@ use App\Contracts\Services\Post\PostServiceInterface;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
+use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * SystemName : Bulletinboard
  * ModuleName : Post
  */
-class PostsController extends Controller
+class PostController extends Controller
 {
     /**
      * The post service interface instance.
      */
     private $postInterface;
-    
+
     /**
      * Create a new controller instance.
      *
@@ -28,8 +29,8 @@ class PostsController extends Controller
     public function __construct(PostServiceInterface $postInterface)
     {
         $this->postInterface = $postInterface;
+        $this->middleware('auth');
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -41,6 +42,22 @@ class PostsController extends Controller
         return view('posts.posts', [
             "posts" => $postLists
         ]);
+    }
+    /**
+     * Show Post List as Json Format for Vue
+     * 
+     * @return array
+     */
+
+    public function addPost(Request $request)
+    {
+        dd($request);
+    }
+
+    public function showPost()
+    {
+        $posts = Post::all()->toArray();
+        return array_reverse($posts);
     }
 
     /**
@@ -205,5 +222,25 @@ class PostsController extends Controller
             return redirect('/')->with('error', 'Error occur when import csv data');
         }
         return redirect('/')->with('message', 'Post Create Successfully');
+    }
+
+    /**
+     *Create Post with vue
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function submit(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|string',
+            'description' => 'required',
+        ]);
+
+        /*
+          Add mail functionality here.
+        */
+
+        return response()->json(null, 200);
     }
 }

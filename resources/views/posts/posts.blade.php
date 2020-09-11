@@ -28,7 +28,7 @@
                 </a>
             </div>
             <div class="py-2">
-                <a href="posts/create" type="button" class="btn btn-success float-right d-none d-md-block">
+                <a href="posts/create" type="button" class="btn btn-success float-right d-none d-md-block active">
                     Add Post <i class="fa fa-plus fa-lg"></i>
                 </a>
             </div>
@@ -54,7 +54,7 @@
                     @foreach($posts as $post)
                     <tr>
                         <td>{{$post->title}}</td>
-                        <td>{{$post->description}}</td>
+                        <td>{{$post->description }}</td>
                         @if(Auth()->check())
                         <td>{{$post->status}}</td>
                         @endif

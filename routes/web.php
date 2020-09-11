@@ -17,21 +17,19 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'PostController@index');
+Route::post('/', 'PostController@search')->name('search');
+Route::get('/posts/create', 'PostController@create');
+Route::get('/posts/edit/{id}', 'PostController@edit')->name('edit');
+Route::post('/posts/confirm', 'PostController@confirm')->name('confirm');
+Route::post('/posts/update_confirm/{id}', 'PostController@update_confirm')->name('update_confirm');
+Route::post('/posts/store', 'PostController@store');
+Route::put('/posts/update/{id}', 'PostController@update');
+Route::delete('/posts/delete', 'PostController@destroy');
 
-Route::get('/', 'PostsController@index');
-Route::post('/', 'PostsController@search')->name('search');
-Route::get('/posts/create', 'PostsController@create');
-Route::get('/posts/edit/{id}', 'PostsController@edit')->name('edit');
-Route::post('/posts/confirm', 'PostsController@confirm')->name('confirm');
-Route::post('/posts/update_confirm/{id}', 'PostsController@update_confirm')->name('update_confirm');
-Route::post('/posts/store', 'PostsController@store');
-Route::put('/posts/update/{id}', 'PostsController@update');
-Route::delete('/posts/delete', 'PostsController@destroy');
-
-Route::get('/posts/upload', 'PostsController@upload');
-Route::get('posts/export', 'PostsController@export')->name('export');
-Route::post('/posts/insert', 'PostsController@uploadCSV')->name('upload_csv');
+Route::get('/posts/upload', 'PostController@upload');
+Route::get('posts/export', 'PostController@export')->name('export');
+Route::post('/posts/insert', 'PostController@uploadCSV')->name('upload_csv');
 
 Auth::routes();
 
@@ -52,3 +50,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::post('/users/store', 'UserController@store')->name('store');
     Route::delete('/users/delete', 'UserController@destroy');
 });
+
+Route::get('/{any}', function () {
+    return view('vue');
+})->where('any', '.*');
