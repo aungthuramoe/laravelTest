@@ -17,20 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
- 
-// Route::post('/posts', 'PostController@addPost');
-//Route::get('/posts', 'PostController@showPost');
+
 Route::apiResource('/posts','API\PostController');
 Route::post('/posts/search','API\PostController@searchPost');
 Route::post('/import','API\PostController@import');
-Route::apiResource('/users','API\UserController');
-Route::get('/user/info','API\UserController@info');
 Route::post('/vuelogin','API\LoginController@login');
 Route::post('/user/logout','API\LoginController@logout');
+Route::apiResource('/users','API\UserController');
 
-// Route::group(['prefix' => 'post'], function () {
-//     Route::post('add', 'PostController@add');
-//     Route::get('edit/{id}', 'PostController@edit');
-//     Route::post('update/{id}', 'PostController@update');
-//     Route::delete('delete/{id}', 'PostController@delete');
+// Route::group(['middleware' => ['auth', 'admin']], function () {
+//     Route::apiResource('/users','API\UserController');
 // });

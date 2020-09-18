@@ -1,8 +1,8 @@
-import axios from 'axios'
 import router from '../../router/routes'
 const state = {
     users: [],
     user: {},
+    currentUser:{},
     isLogin:false
 };
 
@@ -17,8 +17,8 @@ const actions = {
             name: 'users-create-confirm'
         });
     },
-    isLogin({ commit }, val) {
-        commit('isLogin', val);
+    isLogin({ commit }, {isLogin,currentUser}) {
+        commit('isLogin', {isLogin,currentUser});
         router.push({
             name: 'posts'
         })
@@ -27,7 +27,7 @@ const actions = {
 
 const mutations = {
     addNewUser: (state, user) => { state.user = user; },
-    isLogin: (state,val) => {state.isLogin = val}
+    isLogin: (state,{isLogin,currentUser}) => {state.isLogin = isLogin;state.currentUser = currentUser}
 };
 
 export default {

@@ -2,7 +2,6 @@ import router from '../../router/routes'
 const state = {
     posts: [],
     post: {},
-    test: "Hey Vue"
 };
 const getters = {
     postLists: state => state.posts

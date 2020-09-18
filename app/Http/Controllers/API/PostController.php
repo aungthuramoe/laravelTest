@@ -10,7 +10,6 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Log;
-use Maatwebsite\Excel\Facades\Excel;
 
 class PostController extends Controller
 {
@@ -99,7 +98,6 @@ class PostController extends Controller
     }
     public function searchPost(Request $request)
     {
-        Log::info($request->q);
         $posts = $this->postInterface->getUserPost(0, 19, $request->q);
         return response()->json($posts);
     }

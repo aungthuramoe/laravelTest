@@ -8,20 +8,20 @@
         <div>
           <button class="btn btn-primary" @click="searchPost()">Search</button>
         </div>
-        <div class="pl-3">
+        <div v-if="isLogin" class="pl-3">
           <router-link to="/upload" class="btn btn-primary">
             Upload
             <i class="fa fa-upload"></i>
           </router-link>
         </div>
-        <div class="pl-3">
+        <div v-if="isLogin" class="pl-3">
           <export-excel
           class="btn btn-primary pl-3"
           :data="posts.data"
           name="posts.xls"
         >Download   <i class="fa fa-download"></i></export-excel>
         </div>
-        <div class="col">
+        <div v-if="isLogin" class="col">
           <router-link to="/post-create" class="btn btn-success float-right active">
             Add Post
             <i class="fa fa-plus fa-lg"></i>
@@ -35,10 +35,10 @@
           <tr>
             <th scope="col">Title</th>
             <th scope="col">Description</th>
-            <th scope="col">Status</th>
+            <th v-if="isLogin" scope="col">Status</th>
             <th scope="col">Posted User</th>
             <th scope="col">Posted Date</th>
-            <th class="text-center">Actions</th>
+            <th v-if="isLogin" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody v-for="post in posts.data" :key="post.id">
@@ -49,7 +49,7 @@
             <td>
               <strong>{{ post.description }}</strong>
             </td>
-            <td>
+            <td v-if="isLogin">
               <strong>{{ post.status }}</strong>
             </td>
             <td>
@@ -58,7 +58,7 @@
             <td>
               <strong>{{ post.created_at.split('T')[0] }}</strong>
             </td>
-            <td class="text-center">
+            <td class="text-right" v-if="isLogin">
               <button
                 class="btn btn-sm btn-primary"
                 @click="viewPostModal(post.title,post.description,post.created_at)"
@@ -161,7 +161,7 @@
 </template>
 
 <script>
-const alertModule = "AlertModule";
+const userModule = "UsersModule";
 export default {
   data() {
     return {
@@ -170,13 +170,16 @@ export default {
       search: "",
     };
   },
-  created() {
-    console.log("Create Post");
-    this.init();
-    this.getPostList();
+  computed: {
+      currentUser() {
+          return this.$store.state[userModule].currentUser;
+      },
+      isLogin() {
+          return this.$store.state[userModule].isLogin;
+      }
   },
-  mounted() {
-    console.log("All Post are mounted");
+  created() {
+    this.getPostList();
   },
   methods: {
     getPostList(page = 1) {

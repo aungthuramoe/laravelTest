@@ -1,6 +1,7 @@
 <template>
   <ul class="c-sidebar-nav ps ps--active-y">
-    <li class="c-sidebar-nav-item">
+    <h3 v-if="isLogin" class="c-sidebar-nav-item text-center mt-3">{{currentUser.name}}</h3>
+    <li v-if="isLogin" class="c-sidebar-nav-item">
       <router-link to="/vue-profile" class="c-sidebar-nav-link">
         <i class="fas fa-user-circle fa-lg c-sidebar-nav-icon text-warning"></i>Profile
       </router-link>
@@ -10,17 +11,17 @@
         <i class="fas fa-file-alt fa-lg c-sidebar-nav-icon text-info"></i>Posts
       </router-link>
     </li>
-    <li class="c-sidebar-nav-item">
+    <li v-if="isLogin && currentUser.type == 0" class="c-sidebar-nav-item">
       <router-link to="/all-user" class="c-sidebar-nav-link">
         <i class="fas fa-users fa-lg text-light c-sidebar-nav-icon"></i>Users
       </router-link>
     </li>
-    <li class="c-sidebar-nav-item">
+    <li v-if="!isLogin" class="c-sidebar-nav-item">
       <router-link to="/vue-login" class="c-sidebar-nav-link">
         <i class="fas fa-user fa-lg text-success c-sidebar-nav-icon"></i>Login
       </router-link>
     </li>
-    <li class="c-sidebar-nav-item">
+    <li v-if="isLogin" class="c-sidebar-nav-item">
       <router-link @click.native="logout" to="/posts" class="c-sidebar-nav-link">
         <i class="fas fa-sign-out-alt fa-lg text-danger c-sidebar-nav-icon"></i>Logout
       </router-link>
@@ -29,33 +30,26 @@
 </template>
 
 <script>
+const userModule = "UsersModule";
 export default {
   data() {
-    return {};
-  },
-  beforeCreate() {
-    console.log("before create");
-    if (localStorage.getItem("user") == null) {
-      console.log("user is null");
-    } else {
-      console.log(localStorage.getItem("user"));
-    }
+    return {
+    };
   },
   mounted() {
     console.log("Component side bar mounted => ");
   },
+  computed: {
+    isLogin() {
+      return this.$store.state[userModule].isLogin;
+    },
+    currentUser() {
+      return this.$store.state[userModule].currentUser;
+    },
+  },
   methods: {
     logout() {
-      console.log("logout click");
-      axios
-        .post("/api/user/logout")
-        .then((response) => {
-          console.log("RESPONSE -> ", response);
-           localStorage.removeItem("user");
-        })
-        .catch((error) => {
-          console.log("Error", error);
-        });
+      this.$store.dispatch("isLogin", { isLogin: false, currentUser: null });
     },
   },
 };

@@ -1,20 +1,4 @@
 <template>
-  <!-- <div>
-        <h2>Login</h2>
-        <form @submit.prevent="handleSubmit">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" v-model="username" name="username" class="form-control" :class="{ 'is-invalid': submitted && !username }" />
-            </div>
-            <div class="form-group">
-                <label htmlFor="password">Password</label>
-                <input type="password" v-model="password" name="password" class="form-control" :class="{ 'is-invalid': submitted && !password }" />
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary">Login</button>
-            </div>
-        </form>
-  </div>-->
   <div class="jumbotron">
     <div class="container">
       <div class="row">
@@ -97,16 +81,24 @@ export default {
           password: this.user.password,
         })
         .then((response) => {
-          let res = response["data"];
-          if (!res) {
+          let user = response["data"];
+          if (!user) {
             this.error = true;
           } else {
             this.error = false;
-            console.log("RESPONSE :: ", res);
-            localStorage.setItem("user",JSON.stringify(res));
+            if (user.type == 0) {
+              localStorage.setItem("isAdmin", true);
+            } else {
+              localStorage.setItem("isAdmin", false);
+            }
+
+            this.$store.dispatch("isLogin", {
+              isLogin: true,
+              currentUser: user,
+            });
             this.$router.push({
-                name:'posts'
-            })
+              name: "posts",
+            });
           }
         })
         .catch((error) => {

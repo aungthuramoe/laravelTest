@@ -6,7 +6,9 @@ use App\Contracts\Dao\Post\PostDaoInterface;
 use App\Exports\PostExport;
 use App\Imports\PostImport;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Log;
 
 class PostDao implements PostDaoInterface
 {
@@ -103,9 +105,13 @@ class PostDao implements PostDaoInterface
         $post = new Post;
         $post->title = $request->title;
         $post->description =  $request->description;
-        if(auth()->user()->id){
+        if(Auth::user()){
             $post->create_user_id = auth()->user()->id;
             $post->updated_user_id = auth()->user()->id;
+        }else{
+            $post->create_user_id = 19;
+            $post->updated_user_id = 19;
+
         }
         $post->save();
     }

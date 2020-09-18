@@ -49,7 +49,6 @@ Vue.component('add-user', require('./components/User/AddUser.vue').default);
 Vue.component('all-user', require('./components/User/AllUser.vue').default);
 Vue.component('upload-csv', require('./components/CSV/UploadCSV.vue').default);
 
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

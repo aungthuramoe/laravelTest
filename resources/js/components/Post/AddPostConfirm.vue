@@ -7,7 +7,7 @@
             <h2>Create Post Confirm</h2>
           </div>
           <div>
-            <form @submit.prevent="createPost">
+            <form @submit.prevent="createPost()">
               <div class="form-group row">
                 <label class="col-md-3 col-form-label">Post Title</label>
                 <div class="col-md-6">
@@ -34,10 +34,10 @@
                 </div>
               </div>
               <div class="form-group">
-                <button class="col-md-3 btn btn-dark">Cancel Post</button>
                 <button class="col-md-3 btn btn-success active">Create Post</button>
               </div>
             </form>
+            <button @click="cancelPost()" class="col-md-3 btn btn-dark">Cancel Post</button>
           </div>
         </div>
       </div>
@@ -48,7 +48,12 @@
 const postModule = "PostsModule";
 export default {
   data() {
-    return {};
+    return {
+      post: {
+        title: "",
+        description: "",
+      },
+    };
   },
   mounted() {
     console.log("Confirm is mounted");
@@ -67,13 +72,11 @@ export default {
         title: this.title,
         description: this.description,
       };
-      console.log("Post :: ", post);
-      console.log("Post Title :: ", post.title);
-      console.log("Post :: ", post.description);
       axios
         .post("/api/posts", post)
         .then((response) => {
           console.log("POST RESPONSE ::: ", response);
+          this.$store.dispatch("addPost", this.post);
           this.$router.push({
             name: "posts",
           });
@@ -84,6 +87,9 @@ export default {
             name: "post-create",
           });
         });
+    },
+    cancelPost() {
+      this.$router.back();
     },
   },
 };

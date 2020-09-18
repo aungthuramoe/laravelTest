@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import UsersModule from '../store/modules/User'
 import PostsModule from '../store/modules/Post'
 import { alert } from '../store/modules/Alert';
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ const store = new Vuex.Store({
         PostsModule,
         alert,
     },
+    plugins: [createPersistedState()],
     strict: true,
 })
 

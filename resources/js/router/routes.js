@@ -11,56 +11,73 @@ import Login from '../components/Login/Login.vue';
 import UploadCSV from '../components/CSV/UploadCSV.vue';
 
 Vue.use(Router);
-
+// function guardMyroute(to, from, next) {
+//     if () {
+//         next();
+//     }
+//     else {
+//         next('/posts');
+//     }
+// }
 const routes = [
     {
-        name:'posts',
+        name: 'posts',
         path: '/posts',
         component: AllPost,
     },
     {
-        name:'posts-create',
+        name: 'post-create',
         path: '/post-create',
         component: AddPost,
     },
     {
-        name:'posts-create-confirm',
+        name: 'posts-create-confirm',
         path: '/posts-create/confirm',
         component: ConfirmPost,
     },
     {
-        name:'upload',
+        name: 'upload',
         path: '/upload',
         component: UploadCSV,
     },
     {
-        name:'users',
+        name: 'users',
         path: '/all-user',
         component: AllUser,
     },
     {
-        name:'users-create',
+        name: 'users-create',
         path: '/users-create',
         component: AddUser,
     },
     {
-        name:'users-create-confirm',
+        name: 'users-create-confirm',
         path: '/users-create-confirm',
         component: AddUserConfirm,
     },
     {
-        name:'profile',
+        name: 'profile',
         path: '/vue-profile',
         component: Profile,
     },
     {
-        name:'login',
+        name: 'login',
         path: '/vue-login',
         component: Login,
     },
-  ];
-
+];
+// routes.beforeEach((to, from, next) => {
+//     if (isAuthenticated()) {
+//         if (!hasPermissionsNeeded(to)) {
+//             next('/posts');
+//         } else {
+//             next();
+//         }
+//     } else {
+//         next('/vue-login');
+//     }
+// })
 export default new Router({
-    mode:'history',
-    routes:routes
+    mode: 'history',
+    routes: routes
 });

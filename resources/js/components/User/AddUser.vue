@@ -184,9 +184,9 @@ export default {
     };
   },
   mounted() {
-    if(this.$store.state[userModule].user.name != undefined){
-        this.user = this.$store.state[userModule].user
-    }
+    // if(this.$store.state[userModule].user.name != undefined){
+    //     this.user = this.$store.state[userModule].user
+    // }
   },
   validations: {
     user: {

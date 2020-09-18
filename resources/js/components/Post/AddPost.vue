@@ -67,16 +67,20 @@ export default {
     },
   },
   mounted() {
-    console.log(" add post is mounted ");
-    if (this.$store.state[postModule].post.title !== undefined) {
-      this.post.title = this.$store.state[postModule].post.title;
-      this.post.description = this.$store.state[postModule].post.description;
+      if(this.currentPost) {
+          this.post.title = this.currentPost.title;
+          this.post.description = this.currentPost.description;
+      }
+      
+  },
+  computed: {
+    currentPost() {
+        return this.$store.state[postModule].post
     }
   },
   methods: {
     handleSubmit(e) {
       this.submitted = true;
-      // stop here if form is invalid
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;

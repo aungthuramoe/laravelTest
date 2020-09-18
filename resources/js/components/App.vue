@@ -11,11 +11,12 @@ export default {
   name: "app",
   data() {
     return {
-      user: null,
     };
   },
-  created() {
+  beforeCreate() {
+    console.log("App.vue beforeCreate method");
   },
+  created() {},
   mounted() {
     console.log("App is mounted");
   },
@@ -28,17 +29,6 @@ export default {
     ...mapActions({
       clearAlert: "clear",
     }),
-    init() {
-      axios
-        .get("/api/user/info")
-        .then((response) => {
-          this.user = response["data"];
-          console.log("RESPONSE :: Show User info -> ", response["data"]);
-        })
-        .catch((error) => {
-          console.log("ERROR :: ", error);
-        });
-    },
   },
   watch: {
     $route(to, from) {

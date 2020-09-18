@@ -1937,9 +1937,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "app",
   data: function data() {
-    return {
-      user: null
-    };
+    return {};
+  },
+  beforeCreate: function beforeCreate() {
+    console.log("App.vue beforeCreate method");
   },
   created: function created() {},
   mounted: function mounted() {
@@ -1950,20 +1951,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return state.alert;
     }
   })),
-  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])({
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])({
     clearAlert: "clear"
-  })), {}, {
-    init: function init() {
-      var _this = this;
-
-      axios.get("/api/user/info").then(function (response) {
-        _this.user = response["data"];
-        console.log("RESPONSE :: Show User info -> ", response["data"]);
-      })["catch"](function (error) {
-        console.log("ERROR :: ", error);
-      });
-    }
-  }),
+  })),
   watch: {
     $route: function $route(to, from) {
       // clear alert on location change
@@ -2167,22 +2157,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2220,17 +2194,26 @@ __webpack_require__.r(__webpack_exports__);
         email: this.user.email,
         password: this.user.password
       }).then(function (response) {
-        var res = response["data"];
+        var user = response["data"];
 
-        if (!res) {
+        if (!user) {
           _this.error = true;
         } else {
           _this.error = false;
-          console.log("RESPONSE :: ", res);
-          localStorage.setItem("user", JSON.stringify(res));
+
+          if (user.type == 0) {
+            localStorage.setItem("isAdmin", true);
+          } else {
+            localStorage.setItem("isAdmin", false);
+          }
+
+          _this.$store.dispatch("isLogin", {
+            isLogin: true,
+            currentUser: user
+          });
 
           _this.$router.push({
-            name: 'posts'
+            name: "posts"
           });
         }
       })["catch"](function (error) {
@@ -2326,17 +2309,19 @@ var postModule = "PostsModule";
     }
   },
   mounted: function mounted() {
-    console.log(" add post is mounted ");
-
-    if (this.$store.state[postModule].post.title !== undefined) {
-      this.post.title = this.$store.state[postModule].post.title;
-      this.post.description = this.$store.state[postModule].post.description;
+    if (this.currentPost) {
+      this.post.title = this.currentPost.title;
+      this.post.description = this.currentPost.description;
+    }
+  },
+  computed: {
+    currentPost: function currentPost() {
+      return this.$store.state[postModule].post;
     }
   },
   methods: {
     handleSubmit: function handleSubmit(e) {
-      this.submitted = true; // stop here if form is invalid
-
+      this.submitted = true;
       this.$v.$touch();
 
       if (this.$v.$invalid) {
@@ -2408,7 +2393,12 @@ __webpack_require__.r(__webpack_exports__);
 var postModule = "PostsModule";
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      post: {
+        title: "",
+        description: ""
+      }
+    };
   },
   mounted: function mounted() {
     console.log("Confirm is mounted");
@@ -2429,11 +2419,10 @@ var postModule = "PostsModule";
         title: this.title,
         description: this.description
       };
-      console.log("Post :: ", post);
-      console.log("Post Title :: ", post.title);
-      console.log("Post :: ", post.description);
       axios.post("/api/posts", post).then(function (response) {
         console.log("POST RESPONSE ::: ", response);
+
+        _this.$store.dispatch("addPost", _this.post);
 
         _this.$router.push({
           name: "posts"
@@ -2445,6 +2434,9 @@ var postModule = "PostsModule";
           name: "post-create"
         });
       });
+    },
+    cancelPost: function cancelPost() {
+      this.$router.back();
     }
   }
 });
@@ -2622,7 +2614,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-var alertModule = "AlertModule";
+var userModule = "UsersModule";
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2631,13 +2623,16 @@ var alertModule = "AlertModule";
       search: ""
     };
   },
-  created: function created() {
-    console.log("Create Post");
-    this.init();
-    this.getPostList();
+  computed: {
+    currentUser: function currentUser() {
+      return this.$store.state[userModule].currentUser;
+    },
+    isLogin: function isLogin() {
+      return this.$store.state[userModule].isLogin;
+    }
   },
-  mounted: function mounted() {
-    console.log("All Post are mounted");
+  created: function created() {
+    this.getPostList();
   },
   methods: {
     getPostList: function getPostList() {
@@ -2747,30 +2742,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+var userModule = "UsersModule";
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {};
   },
-  beforeCreate: function beforeCreate() {
-    console.log("before create");
-
-    if (localStorage.getItem("user") == null) {
-      console.log("user is null");
-    } else {
-      console.log(localStorage.getItem("user"));
-    }
-  },
   mounted: function mounted() {
     console.log("Component side bar mounted => ");
   },
+  computed: {
+    isLogin: function isLogin() {
+      return this.$store.state[userModule].isLogin;
+    },
+    currentUser: function currentUser() {
+      return this.$store.state[userModule].currentUser;
+    }
+  },
   methods: {
     logout: function logout() {
-      console.log("logout click");
-      axios.post("/api/user/logout").then(function (response) {
-        console.log("RESPONSE -> ", response);
-        localStorage.removeItem("user");
-      })["catch"](function (error) {
-        console.log("Error", error);
+      this.$store.dispatch("isLogin", {
+        isLogin: false,
+        currentUser: null
       });
     }
   }
@@ -2973,10 +2966,9 @@ var userModule = "UsersModule";
       submitted: false
     };
   },
-  mounted: function mounted() {
-    if (this.$store.state[userModule].user.name != undefined) {
-      this.user = this.$store.state[userModule].user;
-    }
+  mounted: function mounted() {// if(this.$store.state[userModule].user.name != undefined){
+    //     this.user = this.$store.state[userModule].user
+    // }
   },
   validations: {
     user: {
@@ -3346,7 +3338,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-var postModule = "PostsModule";
+//
 var userModule = "UsersModule";
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -3354,10 +3346,19 @@ var userModule = "UsersModule";
   },
   mounted: function mounted() {
     console.log("Profile is mounted");
+    console.log('admin or user', localStorage.getItem('isAdmin'));
+  },
+  computed: {
+    isLogin: function isLogin() {
+      return this.$store.state[userModule].isLogin;
+    },
+    currentUser: function currentUser() {
+      return this.$store.state[userModule].currentUser;
+    }
   },
   methods: {
     showInfo: function showInfo() {
-      console.log(localStorage.getItem('user'));
+      console.log(localStorage.getItem("user"));
     }
   }
 });
@@ -41379,7 +41380,7 @@ var render = function() {
                 on: {
                   submit: function($event) {
                     $event.preventDefault()
-                    return _vm.createPost($event)
+                    return _vm.createPost()
                   }
                 }
               },
@@ -41456,6 +41457,19 @@ var render = function() {
                 _vm._v(" "),
                 _vm._m(1)
               ]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "col-md-3 btn btn-dark",
+                on: {
+                  click: function($event) {
+                    return _vm.cancelPost()
+                  }
+                }
+              },
+              [_vm._v("Cancel Post")]
             )
           ])
         ])
@@ -41477,10 +41491,6 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group" }, [
-      _c("button", { staticClass: "col-md-3 btn btn-dark" }, [
-        _vm._v("Cancel Post")
-      ]),
-      _vm._v(" "),
       _c("button", { staticClass: "col-md-3 btn btn-success active" }, [
         _vm._v("Create Post")
       ])
@@ -41550,59 +41560,65 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "pl-3" },
-          [
-            _c(
-              "router-link",
-              { staticClass: "btn btn-primary", attrs: { to: "/upload" } },
+        _vm.isLogin
+          ? _c(
+              "div",
+              { staticClass: "pl-3" },
               [
-                _vm._v("\n          Upload\n          "),
-                _c("i", { staticClass: "fa fa-upload" })
-              ]
+                _c(
+                  "router-link",
+                  { staticClass: "btn btn-primary", attrs: { to: "/upload" } },
+                  [
+                    _vm._v("\n          Upload\n          "),
+                    _c("i", { staticClass: "fa fa-upload" })
+                  ]
+                )
+              ],
+              1
             )
-          ],
-          1
-        ),
+          : _vm._e(),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "pl-3" },
-          [
-            _c(
-              "export-excel",
-              {
-                staticClass: "btn btn-primary pl-3",
-                attrs: { data: _vm.posts.data, name: "posts.xls" }
-              },
+        _vm.isLogin
+          ? _c(
+              "div",
+              { staticClass: "pl-3" },
               [
-                _vm._v("Download   "),
-                _c("i", { staticClass: "fa fa-download" })
-              ]
+                _c(
+                  "export-excel",
+                  {
+                    staticClass: "btn btn-primary pl-3",
+                    attrs: { data: _vm.posts.data, name: "posts.xls" }
+                  },
+                  [
+                    _vm._v("Download   "),
+                    _c("i", { staticClass: "fa fa-download" })
+                  ]
+                )
+              ],
+              1
             )
-          ],
-          1
-        ),
+          : _vm._e(),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col" },
-          [
-            _c(
-              "router-link",
-              {
-                staticClass: "btn btn-success float-right active",
-                attrs: { to: "/post-create" }
-              },
+        _vm.isLogin
+          ? _c(
+              "div",
+              { staticClass: "col" },
               [
-                _vm._v("\n          Add Post\n          "),
-                _c("i", { staticClass: "fa fa-plus fa-lg" })
-              ]
+                _c(
+                  "router-link",
+                  {
+                    staticClass: "btn btn-success float-right active",
+                    attrs: { to: "/post-create" }
+                  },
+                  [
+                    _vm._v("\n          Add Post\n          "),
+                    _c("i", { staticClass: "fa fa-plus fa-lg" })
+                  ]
+                )
+              ],
+              1
             )
-          ],
-          1
-        )
+          : _vm._e()
       ])
     ]),
     _vm._v(" "),
@@ -41614,7 +41630,25 @@ var render = function() {
             "table table-responsive-sm table-hover table-outline mb-0"
         },
         [
-          _vm._m(0),
+          _c("thead", { staticClass: "thead-dark" }, [
+            _c("tr", [
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Title")]),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Description")]),
+              _vm._v(" "),
+              _vm.isLogin
+                ? _c("th", { attrs: { scope: "col" } }, [_vm._v("Status")])
+                : _vm._e(),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Posted User")]),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Posted Date")]),
+              _vm._v(" "),
+              _vm.isLogin
+                ? _c("th", { staticClass: "text-center" }, [_vm._v("Actions")])
+                : _vm._e()
+            ])
+          ]),
           _vm._v(" "),
           _vm._l(_vm.posts.data, function(post) {
             return _c("tbody", { key: post.id }, [
@@ -41626,7 +41660,9 @@ var render = function() {
                       _c("strong", [_vm._v(_vm._s(post.description))])
                     ]),
                     _vm._v(" "),
-                    _c("td", [_c("strong", [_vm._v(_vm._s(post.status))])]),
+                    _vm.isLogin
+                      ? _c("td", [_c("strong", [_vm._v(_vm._s(post.status))])])
+                      : _vm._e(),
                     _vm._v(" "),
                     _c("td", [
                       _c("strong", [_vm._v(_vm._s(post.create_user_id))])
@@ -41638,45 +41674,47 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("td", { staticClass: "text-center" }, [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-primary",
-                          on: {
-                            click: function($event) {
-                              return _vm.viewPostModal(
-                                post.title,
-                                post.description,
-                                post.created_at
-                              )
-                            }
-                          }
-                        },
-                        [
-                          _vm._v("\n              View\n              "),
-                          _c("i", { staticClass: "fa fa-eye" })
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _vm._m(1, true),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-danger active",
-                          on: {
-                            click: function($event) {
-                              return _vm.showDeleteModal(post.id)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v("\n              Delete\n              "),
-                          _c("i", { staticClass: "fa fa-trash" })
-                        ]
-                      )
-                    ])
+                    _vm.isLogin
+                      ? _c("td", { staticClass: "text-right" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-sm btn-primary",
+                              on: {
+                                click: function($event) {
+                                  return _vm.viewPostModal(
+                                    post.title,
+                                    post.description,
+                                    post.created_at
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _vm._v("\n              View\n              "),
+                              _c("i", { staticClass: "fa fa-eye" })
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm._m(0, true),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-sm btn-danger active",
+                              on: {
+                                click: function($event) {
+                                  return _vm.showDeleteModal(post.id)
+                                }
+                              }
+                            },
+                            [
+                              _vm._v("\n              Delete\n              "),
+                              _c("i", { staticClass: "fa fa-trash" })
+                            ]
+                          )
+                        ])
+                      : _vm._e()
                   ])
                 : _vm._e()
             ])
@@ -41692,7 +41730,7 @@ var render = function() {
       [
         _c("div", { staticClass: "modal-dialog modal-dialog-centered" }, [
           _c("div", { staticClass: "modal-content" }, [
-            _vm._m(2),
+            _vm._m(1),
             _vm._v(" "),
             _c("div", { staticClass: "modal-footer" }, [
               _c(
@@ -41723,7 +41761,7 @@ var render = function() {
       ]
     ),
     _vm._v(" "),
-    _vm._m(3),
+    _vm._m(2),
     _vm._v(" "),
     _c(
       "div",
@@ -41739,26 +41777,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", { staticClass: "thead-dark" }, [
-      _c("tr", [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Description")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Status")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Posted User")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Posted Date")]),
-        _vm._v(" "),
-        _c("th", { staticClass: "text-center" }, [_vm._v("Actions")])
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -41898,24 +41916,35 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("ul", { staticClass: "c-sidebar-nav ps ps--active-y" }, [
-    _c(
-      "li",
-      { staticClass: "c-sidebar-nav-item" },
-      [
-        _c(
-          "router-link",
-          { staticClass: "c-sidebar-nav-link", attrs: { to: "/vue-profile" } },
+    _vm.isLogin
+      ? _c("h3", { staticClass: "c-sidebar-nav-item text-center mt-3" }, [
+          _vm._v(_vm._s(_vm.currentUser.name))
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.isLogin
+      ? _c(
+          "li",
+          { staticClass: "c-sidebar-nav-item" },
           [
-            _c("i", {
-              staticClass:
-                "fas fa-user-circle fa-lg c-sidebar-nav-icon text-warning"
-            }),
-            _vm._v("Profile\n    ")
-          ]
+            _c(
+              "router-link",
+              {
+                staticClass: "c-sidebar-nav-link",
+                attrs: { to: "/vue-profile" }
+              },
+              [
+                _c("i", {
+                  staticClass:
+                    "fas fa-user-circle fa-lg c-sidebar-nav-icon text-warning"
+                }),
+                _vm._v("Profile\n    ")
+              ]
+            )
+          ],
+          1
         )
-      ],
-      1
-    ),
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "li",
@@ -41935,68 +41964,79 @@ var render = function() {
       1
     ),
     _vm._v(" "),
-    _c(
-      "li",
-      { staticClass: "c-sidebar-nav-item" },
-      [
-        _c(
-          "router-link",
-          { staticClass: "c-sidebar-nav-link", attrs: { to: "/all-user" } },
+    _vm.isLogin && _vm.currentUser.type == 0
+      ? _c(
+          "li",
+          { staticClass: "c-sidebar-nav-item" },
           [
-            _c("i", {
-              staticClass: "fas fa-users fa-lg text-light c-sidebar-nav-icon"
-            }),
-            _vm._v("Users\n    ")
-          ]
+            _c(
+              "router-link",
+              { staticClass: "c-sidebar-nav-link", attrs: { to: "/all-user" } },
+              [
+                _c("i", {
+                  staticClass:
+                    "fas fa-users fa-lg text-light c-sidebar-nav-icon"
+                }),
+                _vm._v("Users\n    ")
+              ]
+            )
+          ],
+          1
         )
-      ],
-      1
-    ),
+      : _vm._e(),
     _vm._v(" "),
-    _c(
-      "li",
-      { staticClass: "c-sidebar-nav-item" },
-      [
-        _c(
-          "router-link",
-          { staticClass: "c-sidebar-nav-link", attrs: { to: "/vue-login" } },
+    !_vm.isLogin
+      ? _c(
+          "li",
+          { staticClass: "c-sidebar-nav-item" },
           [
-            _c("i", {
-              staticClass: "fas fa-user fa-lg text-success c-sidebar-nav-icon"
-            }),
-            _vm._v("Login\n    ")
-          ]
+            _c(
+              "router-link",
+              {
+                staticClass: "c-sidebar-nav-link",
+                attrs: { to: "/vue-login" }
+              },
+              [
+                _c("i", {
+                  staticClass:
+                    "fas fa-user fa-lg text-success c-sidebar-nav-icon"
+                }),
+                _vm._v("Login\n    ")
+              ]
+            )
+          ],
+          1
         )
-      ],
-      1
-    ),
+      : _vm._e(),
     _vm._v(" "),
-    _c(
-      "li",
-      { staticClass: "c-sidebar-nav-item" },
-      [
-        _c(
-          "router-link",
-          {
-            staticClass: "c-sidebar-nav-link",
-            attrs: { to: "/posts" },
-            nativeOn: {
-              click: function($event) {
-                return _vm.logout($event)
-              }
-            }
-          },
+    _vm.isLogin
+      ? _c(
+          "li",
+          { staticClass: "c-sidebar-nav-item" },
           [
-            _c("i", {
-              staticClass:
-                "fas fa-sign-out-alt fa-lg text-danger c-sidebar-nav-icon"
-            }),
-            _vm._v("Logout\n    ")
-          ]
+            _c(
+              "router-link",
+              {
+                staticClass: "c-sidebar-nav-link",
+                attrs: { to: "/posts" },
+                nativeOn: {
+                  click: function($event) {
+                    return _vm.logout($event)
+                  }
+                }
+              },
+              [
+                _c("i", {
+                  staticClass:
+                    "fas fa-sign-out-alt fa-lg text-danger c-sidebar-nav-icon"
+                }),
+                _vm._v("Logout\n    ")
+              ]
+            )
+          ],
+          1
         )
-      ],
-      1
-    )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -43099,7 +43139,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h1", [_vm._v("Profile")]),
+    _c("h1", [_vm._v("Profile -> " + _vm._s(_vm.isLogin))]),
+    _vm._v(" "),
+    _c("p", [_vm._v(" " + _vm._s(_vm.currentUser))]),
     _vm._v(" "),
     _c(
       "button",
@@ -60224,6 +60266,21 @@ exports.withParams = withParams;
 
 /***/ }),
 
+/***/ "./node_modules/vuex-persistedstate/dist/vuex-persistedstate.es.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/vuex-persistedstate/dist/vuex-persistedstate.es.js ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var r=function(r){return function(r){return!!r&&"object"==typeof r}(r)&&!function(r){var t=Object.prototype.toString.call(r);return"[object RegExp]"===t||"[object Date]"===t||function(r){return r.$$typeof===e}(r)}(r)},e="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function t(r,e){return!1!==e.clone&&e.isMergeableObject(r)?c(Array.isArray(r)?[]:{},r,e):r}function n(r,e,n){return r.concat(e).map(function(r){return t(r,n)})}function o(r){return Object.keys(r).concat(function(r){return Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(r).filter(function(e){return r.propertyIsEnumerable(e)}):[]}(r))}function u(r,e){try{return e in r}catch(r){return!1}}function c(e,i,a){(a=a||{}).arrayMerge=a.arrayMerge||n,a.isMergeableObject=a.isMergeableObject||r,a.cloneUnlessOtherwiseSpecified=t;var f=Array.isArray(i);return f===Array.isArray(e)?f?a.arrayMerge(e,i,a):function(r,e,n){var i={};return n.isMergeableObject(r)&&o(r).forEach(function(e){i[e]=t(r[e],n)}),o(e).forEach(function(o){(function(r,e){return u(r,e)&&!(Object.hasOwnProperty.call(r,e)&&Object.propertyIsEnumerable.call(r,e))})(r,o)||(i[o]=u(r,o)&&n.isMergeableObject(e[o])?function(r,e){if(!e.customMerge)return c;var t=e.customMerge(r);return"function"==typeof t?t:c}(o,n)(r[o],e[o],n):t(e[o],n))}),i}(e,i,a):t(i,a)}c.all=function(r,e){if(!Array.isArray(r))throw new Error("first argument should be an array");return r.reduce(function(r,t){return c(r,t,e)},{})};var i=c;/* harmony default export */ __webpack_exports__["default"] = (function(r){var e=(r=r||{}).storage||window&&window.localStorage,t=r.key||"vuex";(r.assertStorage||function(){e.setItem("@@",1),e.removeItem("@@")})(e);var n,o=function(){return(r.getState||function(r,e){var t;try{return(t=e.getItem(r))&&void 0!==t?JSON.parse(t):void 0}catch(r){}})(t,e)};return r.fetchBeforeUse&&(n=o()),function(u){r.fetchBeforeUse||(n=o()),"object"==typeof n&&null!==n&&(u.replaceState(r.overwrite?n:i(u.state,n,{arrayMerge:r.arrayMerger||function(r,e){return e},clone:!1})),(r.rehydrated||function(){})(u)),(r.subscriber||function(r){return function(e){return r.subscribe(e)}})(u)(function(n,o){(r.filter||function(){return!0})(n)&&(r.setState||function(r,e,t){return t.setItem(r,JSON.stringify(e))})(t,(r.reducer||function(r,e){return Array.isArray(e)?e.reduce(function(e,t){return function(r,e,t,n){return(e=e.split?e.split("."):e).slice(0,-1).reduce(function(r,e){return r[e]=r[e]||{}},r)[e.pop()]=t,r}(e,t,function(r,e,t){return void 0===(r=(e.split?e.split("."):e).reduce(function(r,e){return r&&r[e]},r))?void 0:r}(r,t))},{}):r})(o,r.paths),e)})}});
+//# sourceMappingURL=vuex-persistedstate.es.js.map
+
+
+/***/ }),
+
 /***/ "./node_modules/vuex/dist/vuex.esm.js":
 /*!********************************************!*\
   !*** ./node_modules/vuex/dist/vuex.esm.js ***!
@@ -62462,13 +62519,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]); // function guardMyroute(to, from, next) {
+//     if () {
+//         next();
+//     }
+//     else {
+//         next('/posts');
+//     }
+// }
+
 var routes = [{
   name: 'posts',
   path: '/posts',
   component: _components_Post_AllPost_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
 }, {
-  name: 'posts-create',
+  name: 'post-create',
   path: '/post-create',
   component: _components_Post_AddPost_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
 }, {
@@ -62499,7 +62564,18 @@ var routes = [{
   name: 'login',
   path: '/vue-login',
   component: _components_Login_Login_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
-}];
+}]; // routes.beforeEach((to, from, next) => {
+//     if (isAuthenticated()) {
+//         if (!hasPermissionsNeeded(to)) {
+//             next('/posts');
+//         } else {
+//             next();
+//         }
+//     } else {
+//         next('/vue-login');
+//     }
+// })
+
 /* harmony default export */ __webpack_exports__["default"] = (new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   mode: 'history',
   routes: routes
@@ -62522,6 +62598,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _store_modules_User__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../store/modules/User */ "./resources/js/store/modules/User.js");
 /* harmony import */ var _store_modules_Post__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../store/modules/Post */ "./resources/js/store/modules/Post.js");
 /* harmony import */ var _store_modules_Alert__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../store/modules/Alert */ "./resources/js/store/modules/Alert.js");
+/* harmony import */ var vuex_persistedstate__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex-persistedstate */ "./node_modules/vuex-persistedstate/dist/vuex-persistedstate.es.js");
+
 
 
 
@@ -62534,6 +62612,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     PostsModule: _store_modules_Post__WEBPACK_IMPORTED_MODULE_3__["default"],
     alert: _store_modules_Alert__WEBPACK_IMPORTED_MODULE_4__["alert"]
   },
+  plugins: [Object(vuex_persistedstate__WEBPACK_IMPORTED_MODULE_5__["default"])()],
   strict: true
 });
 /* harmony default export */ __webpack_exports__["default"] = (store);
@@ -62611,8 +62690,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var state = {
   posts: [],
-  post: {},
-  test: "Hey Vue"
+  post: {}
 };
 var getters = {
   postLists: function postLists(state) {
@@ -62666,14 +62744,12 @@ var mutations = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _router_routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../router/routes */ "./resources/js/router/routes.js");
-
+/* harmony import */ var _router_routes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../router/routes */ "./resources/js/router/routes.js");
 
 var state = {
   users: [],
   user: {},
+  currentUser: {},
   isLogin: false
 };
 var getters = {
@@ -62685,14 +62761,19 @@ var actions = {
   addUser: function addUser(_ref, user) {
     var commit = _ref.commit;
     commit("addNewUser", user);
-    _router_routes__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+    _router_routes__WEBPACK_IMPORTED_MODULE_0__["default"].push({
       name: 'users-create-confirm'
     });
   },
-  isLogin: function isLogin(_ref2, val) {
+  isLogin: function isLogin(_ref2, _ref3) {
     var commit = _ref2.commit;
-    commit('isLogin', val);
-    _router_routes__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+    var isLogin = _ref3.isLogin,
+        currentUser = _ref3.currentUser;
+    commit('isLogin', {
+      isLogin: isLogin,
+      currentUser: currentUser
+    });
+    _router_routes__WEBPACK_IMPORTED_MODULE_0__["default"].push({
       name: 'posts'
     });
   }
@@ -62701,8 +62782,11 @@ var mutations = {
   addNewUser: function addNewUser(state, user) {
     state.user = user;
   },
-  isLogin: function isLogin(state, val) {
-    state.isLogin = val;
+  isLogin: function isLogin(state, _ref4) {
+    var _isLogin = _ref4.isLogin,
+        currentUser = _ref4.currentUser;
+    state.isLogin = _isLogin;
+    state.currentUser = currentUser;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
