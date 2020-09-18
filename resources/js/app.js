@@ -6,11 +6,11 @@
 import router from './router/routes';
 import VueAxios from 'vue-axios';
 import axios from 'axios';
-import { Form, HasError, AlertError } from 'vform';
 import Vuelidate from 'vuelidate';
 import Vuex from 'vuex'
 import store from './store/index';
-
+import excel from 'vue-excel-export'
+ 
 // import Vuetify from 'vuetify'
 //import 'vuetify/dist/vuetify.min.css'
 // import Form from './Form';
@@ -22,10 +22,9 @@ window.Vue = require('vue');
 // Vue.use(Vuetify);
 
 Vue.use(VueAxios, axios);
-Vue.use(Vuex)
+Vue.use(Vuex);
+Vue.use(excel)
 Vue.use(Vuelidate);
-
-window.Form = Form;
 
 /**
  * The following block of code may be used to automatically register your
@@ -41,14 +40,14 @@ window.Form = Form;
 // const router = new VueRouter({ mode: 'history', routes: routes});
 // const app = new Vue(Vue.util.extend({ router }, App)).$mount('#app');
 
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
 Vue.component('app-component',require('./components/App.vue').default);
 Vue.component('side-bar',require('./components/SideBar.vue').default);
 Vue.component('add-post',require('./components/Post/AddPost.vue').default);
+Vue.component('add-post-confirm',require('./components/Post/AddPostConfirm.vue').default);
 Vue.component('pagination', require('laravel-vue-pagination'));
 Vue.component('add-user', require('./components/User/AddUser.vue').default);
 Vue.component('all-user', require('./components/User/AllUser.vue').default);
+Vue.component('upload-csv', require('./components/CSV/UploadCSV.vue').default);
 
 
 /**

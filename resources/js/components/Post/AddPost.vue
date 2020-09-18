@@ -37,8 +37,8 @@
                 >Post description is required</div>
               </div>
               <div class="form-group">
-                <button type="reset" class="col-md-3 btn btn-secondary">Clear</button>
-                <button class="col-md-3 btn btn-success">Confirm</button>
+                <button type="reset" class="col-md-3 btn btn-dark">Clear</button>
+                <button class="col-md-3 btn btn-success active">Confirm</button>
               </div>
             </form>
           </div>
@@ -49,7 +49,7 @@
 </template>
 <script>
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
-import { mapState } from "vuex";
+const postModule = "PostsModule";
 export default {
   data() {
     return {
@@ -66,6 +66,13 @@ export default {
       description: { required, maxLength: maxLength(200) },
     },
   },
+  mounted() {
+    console.log(" add post is mounted ");
+    if (this.$store.state[postModule].post.title !== undefined) {
+      this.post.title = this.$store.state[postModule].post.title;
+      this.post.description = this.$store.state[postModule].post.description;
+    }
+  },
   methods: {
     handleSubmit(e) {
       this.submitted = true;
@@ -74,6 +81,7 @@ export default {
       if (this.$v.$invalid) {
         return;
       }
+      this.$store.dispatch("addPost", this.post);
     },
   },
 };

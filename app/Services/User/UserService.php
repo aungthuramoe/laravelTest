@@ -5,6 +5,9 @@ namespace App\Services\User;
 use App\Contracts\Dao\User\UserDaoInterface;
 use App\Contracts\Services\User\UserServiceInterface;
 use Illuminate\Support\Facades\Storage;
+use Hash;
+use Illuminate\Database\QueryException;
+use Log;
 
 /**
  * System Name : Bollentine Board
@@ -109,5 +112,27 @@ class UserService implements UserServiceInterface
     public function updatePassword($id, $password)
     {
         return $this->userDao->updatePassword($id, $password);
+    }
+
+    /**
+     * Get user info by email
+     * 
+     * @param $email
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserInfo($email, $password)
+    {
+        try {
+            $user = $this->userDao->getUserInfo($email);
+            if (!empty($user)) {
+                if ((!Hash::check($password,$user->password))) {
+                    return false;
+                } else {
+                    return $user;
+                }
+            }
+        } catch (QueryException $e) {
+            Log::error($e);
+        }
     }
 }

@@ -2,19 +2,27 @@
   <div class="card">
     <div class="card-header">
       <div class="row">
-        <div class="col-md-6">
-          <h2>Value from state -> {{ test }}</h2>
+        <div class="col-md-2">
+          <input class="form-control" type="text" v-model="search" placeholder="Search" />
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <h2>Post Lists</h2>
+        <div>
+          <button class="btn btn-primary" @click="searchPost()">Search</button>
         </div>
-        <div class="col-md-6 d-flex justify-content-end">
-          <router-link
-            to="/post-create"
-            class="btn btn-success float-right d-none d-md-block active"
-          >
+        <div class="pl-3">
+          <router-link to="/upload" class="btn btn-primary">
+            Upload
+            <i class="fa fa-upload"></i>
+          </router-link>
+        </div>
+        <div class="pl-3">
+          <export-excel
+          class="btn btn-primary pl-3"
+          :data="posts.data"
+          name="posts.xls"
+        >Download   <i class="fa fa-download"></i></export-excel>
+        </div>
+        <div class="col">
+          <router-link to="/post-create" class="btn btn-success float-right active">
             Add Post
             <i class="fa fa-plus fa-lg"></i>
           </router-link>
@@ -153,37 +161,25 @@
 </template>
 
 <script>
-const postModule = "PostsModule";
+const alertModule = "AlertModule";
 export default {
   data() {
     return {
       posts: {},
       deletePostID: -1,
-      form: new Form({
-        id: "",
-        category: "",
-        name: "",
-        description: "",
-        tags: [],
-        photo: "",
-        category_id: "",
-        price: "",
-        photoUrl: "",
-      }),
+      search: "",
     };
   },
-  mounted() {
-    console.log(this.$store.state[postModule].title);
+  created() {
+    console.log("Create Post");
+    this.init();
     this.getPostList();
   },
-  computed: {
-    test() {
-        return this.$store.state[postModule].title;
-    }
+  mounted() {
+    console.log("All Post are mounted");
   },
   methods: {
     getPostList(page = 1) {
-      console.log("get post list method");
       axios
         .get("/api/posts?page=" + page)
         .then((response) => {
@@ -204,19 +200,44 @@ export default {
     showDeleteModal(id) {
       $("#delete-post").modal("show");
       this.deletePostID = id;
-      console.log("Post id is ", id);
     },
     deletePost() {
       $("#delete-post").modal("hide");
       axios
         .delete("/api/posts/" + this.deletePostID)
         .then((response) => {
-          console.log("Successfully Deleted", response);
+          this.$store.dispatch("error", "Delete successful", { root: true });
           this.getPostList();
-          this.$emit("sendingInfo", "Successfully Deleted");
         })
         .catch((error) => {
           console.log("Delete ERROR :: ", error);
+        });
+    },
+    searchPost() {
+      console.log("search text ", this.search);
+      axios
+        .post("api/posts/search", { q: this.search })
+        .then((response) => {
+          console.log(response["data"]);
+          this.posts = response["data"];
+          if (this.posts.data.length == 0) {
+            console.log("post not found");
+            this.search = "";
+            this.getPostList();
+          }
+        })
+        .catch((error) => {
+          console.log("ERROR :: ", error);
+        });
+    },
+    init() {
+      axios
+        .get("/api/user/info")
+        .then((response) => {
+          console.log("RESPONSE :: Show User info -> ", response);
+        })
+        .catch((error) => {
+          console.log("ERROR :: ", error);
         });
     },
   },

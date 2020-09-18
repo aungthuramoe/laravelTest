@@ -44,7 +44,6 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $userList = $this->userInterface->getUserList();
-        $userList = $this->userInterface->getUserList();
         return view('users.user', [
             'users' => $userList,
         ]);

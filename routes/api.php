@@ -21,7 +21,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Route::post('/posts', 'PostController@addPost');
 //Route::get('/posts', 'PostController@showPost');
 Route::apiResource('/posts','API\PostController');
-Route::post('/login','API\PostController@login');
+Route::post('/posts/search','API\PostController@searchPost');
+Route::post('/import','API\PostController@import');
+Route::apiResource('/users','API\UserController');
+Route::get('/user/info','API\UserController@info');
+Route::post('/vuelogin','API\LoginController@login');
+Route::post('/user/logout','API\LoginController@logout');
+
 // Route::group(['prefix' => 'post'], function () {
 //     Route::post('add', 'PostController@add');
 //     Route::get('edit/{id}', 'PostController@edit');

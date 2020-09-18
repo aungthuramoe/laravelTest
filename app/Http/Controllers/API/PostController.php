@@ -5,10 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Contracts\Services\Post\PostServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
-use Log;
+use App\Imports\PostImport;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log as FacadesLog;
+use Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PostController extends Controller
 {
@@ -45,9 +47,10 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PostRequest $request)
+    public function store(Request $request)
     {
-        // Save to Database
+        //Log::info($request->description);
+        $this->postInterface->savePost($request);
     }
 
     /**
@@ -94,12 +97,18 @@ class PostController extends Controller
     {
         $this->postInterface->deletePost(Auth::id(), $id);
     }
-
-    public function login(Request $request)
+    public function searchPost(Request $request)
     {
-        $this->validate($request, [
-            'username' => 'required',
-            'password' => 'required',
-        ]);
+        Log::info($request->q);
+        $posts = $this->postInterface->getUserPost(0, 19, $request->q);
+        return response()->json($posts);
+    }
+
+    public function import(Request $request)
+    {
+        Log::info("import");
+        Log::info($request);
+        $isUpload = $this->postInterface->savePostWithCSV($request->file('csvfile'));
+        return response()->json(["status" => $isUpload,"message" => "my message"]);
     }
 }

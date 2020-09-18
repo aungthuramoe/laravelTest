@@ -13,10 +13,11 @@ class PostExport implements FromCollection
      */
     public function collection()
     {
-        if (Auth::user()->type == 0) {
-            return Post::all();
-        } else {
-            return Post::where('create_user_id', auth()->user()->id)->get();
-        }
+        return Post::all();
+        // if (Auth::user()->type == 0) {
+        //     return Post::all();
+        // } else {
+        //     return Post::where('create_user_id', auth()->user()->id)->get();
+        // }
     }
 }

@@ -22,7 +22,7 @@ Route::post('/', 'PostController@search')->name('search');
 Route::get('/posts/create', 'PostController@create');
 Route::get('/posts/edit/{id}', 'PostController@edit')->name('edit');
 Route::post('/posts/confirm', 'PostController@confirm')->name('confirm');
-Route::post('/posts/update_confirm/{id}', 'PostController@update_confirm')->name('update_confirm');
+Route::post('/posts/update_confirm/{id}', 'PostController@updateConfirm')->name('update_confirm');
 Route::post('/posts/store', 'PostController@store');
 Route::put('/posts/update/{id}', 'PostController@update');
 Route::delete('/posts/delete', 'PostController@destroy');
@@ -54,3 +54,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 Route::get('/{any}', function () {
     return view('vue');
 })->where('any', '.*');
+
+Route::prefix('auth')->group(function(){
+    Route::post('/vuelogin','API\UserController@login');
+    Route::post('/logout','API\UserController@logout');
+});

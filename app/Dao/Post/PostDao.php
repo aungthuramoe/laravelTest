@@ -103,8 +103,10 @@ class PostDao implements PostDaoInterface
         $post = new Post;
         $post->title = $request->title;
         $post->description =  $request->description;
-        $post->create_user_id = auth()->user()->id;
-        $post->updated_user_id = auth()->user()->id;
+        if(auth()->user()->id){
+            $post->create_user_id = auth()->user()->id;
+            $post->updated_user_id = auth()->user()->id;
+        }
         $post->save();
     }
 

@@ -90,7 +90,7 @@ class PostController extends Controller
      * @param int $id 
      * @return  \Illuminate\Http\Response
      */
-    public function update_confirm(PostRequest $request, $id)
+    public function updateConfirm(PostRequest $request, $id)
     {
         $data['id'] = $id;
         $data['title'] = $request->title;

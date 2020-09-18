@@ -4,8 +4,10 @@ namespace App\Dao\User;
 
 use App\Contracts\Dao\User\UserDaoInterface;
 use App\User;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
-
+use Log;
 class UserDao implements UserDaoInterface
 {
     /**
@@ -141,5 +143,17 @@ class UserDao implements UserDaoInterface
         $user = User::find($id);
         $user->password = Hash::make($password);
         $user->save();
+    }
+
+    public function getUserInfo($email)
+    {
+        try {
+            $user = User::where('email',$email)->first();
+            return $user;
+        }catch(Exception $e){
+            Log::info("error");
+            throw new Exception($e);
+        }
+        
     }
 }
