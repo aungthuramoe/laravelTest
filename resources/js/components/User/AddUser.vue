@@ -83,7 +83,7 @@
               <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="type">User Type</label>
                 <div class="col-md-6">
-                  <input
+                  <select
                     type="text"
                     v-model="user.type"
                     id="type"
@@ -91,7 +91,10 @@
                     placeholder="type"
                     class="form-control"
                     :class="{ 'is-invalid': submitted && $v.user.type.$error }"
-                  />
+                  >
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                  </select>
                   <div
                     v-if="submitted && !$v.user.type.required"
                     class="invalid-feedback"

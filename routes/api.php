@@ -20,10 +20,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::apiResource('/posts','API\PostController');
 Route::post('/posts/search','API\PostController@searchPost');
+
 Route::post('/import','API\PostController@import');
 Route::post('/vuelogin','API\LoginController@login');
 Route::post('/user/logout','API\LoginController@logout');
 Route::apiResource('/users','API\UserController');
+Route::post('/users/search','API\UserController@searchUser');
+Route::post('/user/change-password','API\UserController@changePassword');
 
 // Route::group(['middleware' => ['auth', 'admin']], function () {
 //     Route::apiResource('/users','API\UserController');

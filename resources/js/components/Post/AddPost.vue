@@ -70,8 +70,7 @@ export default {
       if(this.currentPost) {
           this.post.title = this.currentPost.title;
           this.post.description = this.currentPost.description;
-      }
-      
+      }  
   },
   computed: {
     currentPost() {

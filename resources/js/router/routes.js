@@ -7,6 +7,8 @@ import AddUser from '../components/User/AddUser.vue';
 import AddUserConfirm from '../components/User/AddUserConfirm.vue';
 import AllUser from '../components/User/AllUser.vue';
 import Profile from '../components/User/Profile.vue';
+import ChangePassword from '../components/User/ChangePassword.vue';
+import EditProfile from '../components/User/EditProfile.vue';
 import Login from '../components/Login/Login.vue';
 import UploadCSV from '../components/CSV/UploadCSV.vue';
 
@@ -61,9 +63,19 @@ const routes = [
         component: Profile,
     },
     {
+        name: 'edit-profile',
+        path: '/vue-edit-profile',
+        component: EditProfile,
+    },
+    {
         name: 'login',
         path: '/vue-login',
         component: Login,
+    },
+    {
+        name: 'change-password',
+        path: '/vue-change-password',
+        component: ChangePassword,
     },
 ];
 // routes.beforeEach((to, from, next) => {

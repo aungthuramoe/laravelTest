@@ -114,25 +114,4 @@ class UserService implements UserServiceInterface
         return $this->userDao->updatePassword($id, $password);
     }
 
-    /**
-     * Get user info by email
-     * 
-     * @param $email
-     * @return \Illuminate\Http\Response
-     */
-    public function getUserInfo($email, $password)
-    {
-        try {
-            $user = $this->userDao->getUserInfo($email);
-            if (!empty($user)) {
-                if ((!Hash::check($password,$user->password))) {
-                    return false;
-                } else {
-                    return $user;
-                }
-            }
-        } catch (QueryException $e) {
-            Log::error($e);
-        }
-    }
 }

@@ -15,11 +15,10 @@
           </router-link>
         </div>
         <div v-if="isLogin" class="pl-3">
-          <export-excel
-          class="btn btn-primary pl-3"
-          :data="posts.data"
-          name="posts.xls"
-        >Download   <i class="fa fa-download"></i></export-excel>
+          <export-excel class="btn btn-primary pl-3" :data="posts.data" name="posts.xls">
+            Download
+            <i class="fa fa-download"></i>
+          </export-excel>
         </div>
         <div v-if="isLogin" class="col">
           <router-link to="/post-create" class="btn btn-success float-right active">
@@ -58,7 +57,29 @@
             <td>
               <strong>{{ post.created_at.split('T')[0] }}</strong>
             </td>
-            <td class="text-right" v-if="isLogin">
+            <td class="text-right" v-if="isLogin &&  currentUser.type == 1">
+              <button
+                class="btn btn-sm btn-primary"
+                v-if="post.create_user_id == currentUser.id"
+                @click="viewPostModal(post.title,post.description,post.created_at)"
+              >
+                View
+                <i class="fa fa-eye"></i>
+              </button>
+              <button v-if="post.create_user_id == currentUser.id" class="btn btn-sm btn-primary">
+                Edit
+                <i class="fa fa-edit"></i>
+              </button>
+              <button
+                v-if="post.create_user_id == currentUser.id"
+                class="btn btn-sm btn-danger active"
+                @click="showDeleteModal(post.id)"
+              >
+                Delete
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+            <td class="text-right" v-if="isLogin &&  currentUser.type == 0">
               <button
                 class="btn btn-sm btn-primary"
                 @click="viewPostModal(post.title,post.description,post.created_at)"
@@ -137,8 +158,8 @@
                 <div class="col-sm-8 col-lg-6">
                   <input
                     type="text"
-                    readonly
                     class="form-control-plaintext"
+                    :value="date"
                     name="post_date"
                     id="post_date"
                   />
@@ -166,21 +187,23 @@ export default {
   data() {
     return {
       posts: {},
+      date: "",
       deletePostID: -1,
       search: "",
     };
   },
   computed: {
-      currentUser() {
-          return this.$store.state[userModule].currentUser;
-      },
-      isLogin() {
-          return this.$store.state[userModule].isLogin;
-      }
+    currentUser() {
+      return this.$store.state[userModule].currentUser;
+    },
+    isLogin() {
+      return this.$store.state[userModule].isLogin;
+    },
   },
   created() {
     this.getPostList();
   },
+  mounted() {},
   methods: {
     getPostList(page = 1) {
       axios
@@ -196,9 +219,10 @@ export default {
     viewPostModal(title, description, created_at) {
       $("#view-post").modal("show");
       var modal = $(this);
-      modal.find("#title").val(title);
-      modal.find("#post_date").val(post_date);
-      modal.find("#description").val(description);
+      modal.find("#title").val("Title");
+      date = description;
+      //modal.find("#post_date").val("Dated");
+      modal.find("#description").val("Description");
     },
     showDeleteModal(id) {
       $("#delete-post").modal("show");

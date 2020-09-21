@@ -3,21 +3,32 @@
     <div class="card-header">
       <div class="row">
         <div class="col-md-2">
-          <input class="form-control" id='name' name="name" type="text"  placeholder="Search By Name">
+          <input
+            class="form-control"
+            id="name"
+            name="name"
+            type="text"
+            v-model="name"
+            placeholder="Search By Name"
+          />
         </div>
         <div class="col-md-2">
-           <input class="form-control" name="email" type="text" placeholder="Search By Email">
+          <input
+            class="form-control"
+            name="email"
+            v-model="email"
+            type="text"
+            placeholder="Search By Email"
+          />
         </div>
         <div class="col-md-2">
-          <input class="form-control" id="from" name="from" type="date">
+          <input class="form-control" id="from" name="from" v-model="from" type="date" />
         </div>
         <div class="col-md-2">
-          <input class="form-control" id="from" name="from" type="date">
+          <input class="form-control" id="from" name="from" v-model="to" type="date" />
         </div>
         <div>
-          <button class="btn btn-primary float-right">
-           Search
-          </button>
+          <button @click="searchUser()" class="btn btn-primary float-right">Search</button>
         </div>
         <div class="col-md-3">
           <router-link to="/users-create" class="btn btn-success float-right active">
@@ -111,6 +122,10 @@ export default {
   data() {
     return {
       users: {},
+      name: "",
+      email: "",
+      from: "",
+      to: "",
     };
   },
   created() {
@@ -132,6 +147,29 @@ export default {
         .catch((error) => {
           console.log("ERROR :: ", error);
         });
+    },
+    searchUser() {
+        axios
+          .post("api/users/search", {
+              name: this.name,
+              email: this.email,
+              from: this.from,
+              to: this.to, })
+          .then((response) => {
+            console.log(response["data"]);
+            this.users = response["data"];
+            if (this.users.data.length == 0) {
+              console.log("user not found");
+              this.name = "";
+              this.email = "";
+              this.from = "";
+              this.to = "";
+              this.getUserList();
+            }
+          })
+          .catch((error) => {
+            console.log("ERROR :: ", error);
+          });
     },
   },
 };

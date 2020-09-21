@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 use Log;
+
 class UserDao implements UserDaoInterface
 {
     /**
@@ -68,8 +69,14 @@ class UserDao implements UserDaoInterface
         $user->dob = $request->dob;
         $user->address = $request->address;
         $user->profile = $request->profile;
-        $user->create_user_id = auth()->user()->id;
-        $user->updated_user_id = auth()->user()->id;
+        if (auth()->user()->id) {
+            $user->create_user_id = auth()->user()->id;
+            $user->updated_user_id = auth()->user()->id;
+        } else {
+            $user->create_user_id = 19;
+            $user->updated_user_id = 19;
+        }
+
         $user->save();
     }
 
@@ -99,7 +106,7 @@ class UserDao implements UserDaoInterface
         $user->save();
     }
 
-     /**
+    /**
      * Delete User
      * 
      * @param $adminID
@@ -143,17 +150,5 @@ class UserDao implements UserDaoInterface
         $user = User::find($id);
         $user->password = Hash::make($password);
         $user->save();
-    }
-
-    public function getUserInfo($email)
-    {
-        try {
-            $user = User::where('email',$email)->first();
-            return $user;
-        }catch(Exception $e){
-            Log::info("error");
-            throw new Exception($e);
-        }
-        
     }
 }

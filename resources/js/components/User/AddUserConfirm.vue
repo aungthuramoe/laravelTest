@@ -134,13 +134,13 @@ export default {
         axios
           .post("/api/users", this.user)
           .then((response) => {
-            console.log("USER RESPONSE ::: ", response);
+            console.log("RESPONSE ::: ", response);
             this.$router.push({
               name: "users",
             });
           })
           .catch((error) => {
-            console.log("USER ERROR ::: ", error);
+            console.log("ERROR ::: ", error);
             this.$router.push({
               name: "users-create",
             });

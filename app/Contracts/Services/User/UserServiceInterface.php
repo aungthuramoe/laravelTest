@@ -18,6 +18,4 @@ interface UserServiceInterface
   public function viewProfile($id);
   // update password
   public function updatePassword($id,$password);
-  // get user info by email
-  public function getUserInfo($email,$password);
 }
