@@ -27,7 +27,7 @@
           class="invalid-feedback"
         >CSV file is required</span>
       </div>
-      <button class="btn btn-success active mt-2" @click="proceedAction()">Upload CSV</button>
+      <button class="btn btn-success active mt-2" @click="uploadCSV()">Upload CSV</button>
     </div>
   </div>
 </template> 
@@ -75,7 +75,7 @@ export default {
       this.import_file = e.target.files[0];
     },
 
-    proceedAction() {
+    uploadCSV() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;

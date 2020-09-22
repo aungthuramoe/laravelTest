@@ -53,12 +53,6 @@ class PostController extends Controller
         dd($request);
     }
 
-    public function showPost()
-    {
-        $posts = Post::all()->toArray();
-        return array_reverse($posts);
-    }
-
     /**
      * Show the form for creating a new resource.
      *

@@ -141,16 +141,29 @@
               <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="profile">Profile Image</label>
                 <div class="col-md-6">
-                  <input
+                  <!-- <input
                     type="file"
                     id="profile"
                     name="profile"
+                    @change="onFileChange"
                     class="form-control"
-                    :class="{ 'is-invalid': submitted && $v.user.profile.$error }"
-                  />
+                  />-->
                   <!-- <div v-if="submitted && $v.user.profile.$error" class="invalid-feedback">
                     <span v-if="!$v.user.profile.required">User Profile is required</span>
                   </div>-->
+                  <input
+                    id="profile_image"
+                    accept="image/jpeg, image/jpg, image/png"
+                    type="file"
+                    :class="{ 'is-invalid': submitted && $v.user.profile.$error }"
+                    class="form-control form-control-user"
+                    name="profile"
+                  />
+                  <div
+                    v-if="submitted && !$v.user.profile.required"
+                    class="invalid-feedback"
+                  >Profile is required</div>
+                  <img id="profile_image-tag" width="200px" class="mt-4" />
                 </div>
               </div>
               <div class="form-group">
@@ -190,6 +203,18 @@ export default {
     // if(this.$store.state[userModule].user.name != undefined){
     //     this.user = this.$store.state[userModule].user
     // }
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $("#profile_image-tag").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    $("#profile_image").change(function () {
+      readURL(this);
+    });
   },
   validations: {
     user: {
@@ -211,6 +236,11 @@ export default {
         return;
       }
       this.$store.dispatch("addUser", this.user);
+    },
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.createImage(files[0]);
     },
   },
 };

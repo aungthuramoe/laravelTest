@@ -41,7 +41,7 @@
           </tr>
         </thead>
         <tbody v-for="post in posts.data" :key="post.id">
-          <tr v-if="post.status == 1">
+          <tr>
             <td>
               <strong>{{ post.title }}</strong>
             </td>
@@ -61,12 +61,16 @@
               <button
                 class="btn btn-sm btn-primary"
                 v-if="post.create_user_id == currentUser.id"
-                @click="viewPostModal(post.title,post.description,post.created_at)"
+                @click="viewPostModal(post,false)"
               >
                 View
                 <i class="fa fa-eye"></i>
               </button>
-              <button v-if="post.create_user_id == currentUser.id" class="btn btn-sm btn-primary">
+              <button
+                class="btn btn-sm btn-primary"
+                v-if="post.create_user_id == currentUser.id"
+                @click="viewPostModal(post,true)"
+              >
                 Edit
                 <i class="fa fa-edit"></i>
               </button>
@@ -80,14 +84,11 @@
               </button>
             </td>
             <td class="text-right" v-if="isLogin &&  currentUser.type == 0">
-              <button
-                class="btn btn-sm btn-primary"
-                @click="viewPostModal(post.title,post.description,post.created_at)"
-              >
+              <button class="btn btn-sm btn-primary" @click="viewPostModal(post,false)">
                 View
                 <i class="fa fa-eye"></i>
               </button>
-              <button class="btn btn-sm btn-primary">
+              <button class="btn btn-sm btn-primary" @click="viewPostModal(post,true)">
                 Edit
                 <i class="fa fa-edit"></i>
               </button>
@@ -127,16 +128,18 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form>
+          <form @submit.prevent="updatePost()">
             <div class="modal-body">
               <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Post Title</label>
                 <div class="col-sm-8 col-lg-6">
                   <input
                     type="text"
-                    readonly
-                    class="form-control-plaintext"
+                    :readonly="!edit"
+                    :class="custom"
+                    value="Post Title"
                     name="title"
+                    v-model="post.title"
                     id="title"
                   />
                 </div>
@@ -146,24 +149,40 @@
                 <div class="col-sm-8 col-lg-6">
                   <input
                     type="text"
-                    readonly
-                    class="form-control-plaintext"
+                    :readonly="!edit"
+                    :class="custom"
+                    v-model="post.description"
                     name="description"
                     id="description"
                   />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group row" v-if="!edit">
                 <label class="col-sm-4 col-form-label">Posted Date</label>
                 <div class="col-sm-8 col-lg-6">
                   <input
                     type="text"
+                    readonly
                     class="form-control-plaintext"
-                    :value="date"
+                    v-model="post.postedDate"
                     name="post_date"
                     id="post_date"
                   />
                 </div>
+              </div>
+              <div class="form-group row" v-if="edit">
+                <label class="col-sm-4 col-lg-4 col-form-label">Posted Status</label>
+                <div class="col-sm-8 col-lg-6">
+                  <toggle-button
+                    :value="post.status==0?false:true"
+                    v-model="post.status"
+                    color="#00AB66"
+                    :sync="true"
+                  />
+                </div>
+              </div>
+              <div class="form-group row float-right mr-3">
+                <button v-if="edit" class="btn btn-primary btn-success">Update</button>
               </div>
             </div>
           </form>
@@ -187,9 +206,18 @@ export default {
   data() {
     return {
       posts: {},
+      post: {
+        id: "",
+        title: "",
+        description: "",
+        status: "",
+        postedDate: "",
+      },
       date: "",
       deletePostID: -1,
       search: "",
+      edit: true,
+      custom: "",
     };
   },
   computed: {
@@ -216,13 +244,25 @@ export default {
           console.log("ERROR :: ", error);
         });
     },
-    viewPostModal(title, description, created_at) {
+    viewPostModal(post, edit) {
+      if (edit) {
+        this.custom = "form-control";
+      } else {
+        this.custom = "form-control-plaintext";
+      }
+      this.edit = edit;
       $("#view-post").modal("show");
       var modal = $(this);
-      modal.find("#title").val("Title");
-      date = description;
-      //modal.find("#post_date").val("Dated");
-      modal.find("#description").val("Description");
+      this.post.id = post.id;
+      this.post.title = post.title;
+      this.post.description = post.description;
+      this.post.status = post.status;
+      if(post.status == 0) {
+          this.post.status = false;
+      }else{
+          this.post.status = true;
+      }
+      this.post.postedDate = post.created_at.split("T")[0];
     },
     showDeleteModal(id) {
       $("#delete-post").modal("show");
@@ -257,14 +297,17 @@ export default {
           console.log("ERROR :: ", error);
         });
     },
-    init() {
+    updatePost() {
       axios
-        .get("/api/user/info")
+        .put(`/api/posts/${this.post.id}`, this.post)
         .then((response) => {
-          console.log("RESPONSE :: Show User info -> ", response);
+          console.log(response["data"]);
+          this.getPostList();
+          $("#view-post").modal("hide");
         })
         .catch((error) => {
           console.log("ERROR :: ", error);
+          $("#view-post").modal("hide");
         });
     },
   },

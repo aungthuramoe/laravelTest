@@ -80,11 +80,11 @@
               <strong>{{ user.updated_at.split('T')[0]}}</strong>
             </td>
             <td class="text-center">
-              <button class="btn btn-sm btn-primary">
+              <button class="btn btn-sm btn-primary" @click="showUserInformation(user)">
                 View
                 <i class="fa fa-eye"></i>
               </button>
-              <button class="btn btn-sm btn-danger active">
+              <button class="btn btn-sm btn-danger active" @click="showDeleteModal(user.id)">
                 Delete
                 <i class="fa fa-trash"></i>
               </button>
@@ -109,11 +109,70 @@
       </div>
     </div>
     <div class="d-flex justify-content-center">
-      <!-- <pagination :data="posts" @pagination-change-page="getPostList">
-        <span slot="prev-nav">&lt; Previous</span>
-        <span slot="next-nav">Next &gt;</span>
-      </pagination>-->
       <pagination :data="users" @pagination-change-page="getUserList"></pagination>
+    </div>
+    <div class="modal" id="delete-user" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <strong>Are you sure you want to delete ?</strong>
+            </h5>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" @click="deleteUser()">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="view-user" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-primary text-center w-100">
+              <strong>User Information</strong>
+            </h5>
+            <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form @submit.prevent="updatePost()">
+            <div class="modal-body">
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Name</label>
+                <div class="col-sm-8 col-lg-6">
+                  <input type="text" readonly class="form-control-plaintext" v-model="user.name" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-8 col-lg-6">
+                  <input type="text" readonly class="form-control-plaintext" v-model="user.email" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Birthdate</label>
+                <div class="col-sm-8 col-lg-6">
+                  <input type="text" readonly class="form-control-plaintext" v-model="user.birthdate" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Phone</label>
+                <div class="col-sm-8 col-lg-6">
+                  <input type="text" readonly class="form-control-plaintext" v-model="user.phone" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Address</label>
+                <div class="col-sm-8 col-lg-6">
+                  <input type="text" readonly class="form-control-plaintext" v-model="user.address" />
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -122,10 +181,18 @@ export default {
   data() {
     return {
       users: {},
+      user: {
+        name: "",
+        email: "",
+        address: "",
+        birthdate: "",
+        phone: "",
+      },
       name: "",
       email: "",
       from: "",
       to: "",
+      deleteUserID: -1,
     };
   },
   created() {
@@ -149,27 +216,55 @@ export default {
         });
     },
     searchUser() {
-        axios
-          .post("api/users/search", {
-              name: this.name,
-              email: this.email,
-              from: this.from,
-              to: this.to, })
-          .then((response) => {
-            console.log(response["data"]);
-            this.users = response["data"];
-            if (this.users.data.length == 0) {
-              console.log("user not found");
-              this.name = "";
-              this.email = "";
-              this.from = "";
-              this.to = "";
-              this.getUserList();
-            }
-          })
-          .catch((error) => {
-            console.log("ERROR :: ", error);
-          });
+      axios
+        .post("api/users/search", {
+          name: this.name,
+          email: this.email,
+          from: this.from,
+          to: this.to,
+        })
+        .then((response) => {
+          console.log(response["data"]);
+          this.users = response["data"];
+          if (this.users.data.length == 0) {
+            console.log("user not found");
+            this.name = "";
+            this.email = "";
+            this.from = "";
+            this.to = "";
+            this.getUserList();
+          }
+        })
+        .catch((error) => {
+          console.log("ERROR :: ", error);
+        });
+    },
+    showDeleteModal(id) {
+      $("#delete-user").modal("show");
+      this.deleteUserID = id;
+    },
+    deleteUser() {
+      axios
+        .delete("/api/users/" + this.deleteUserID)
+        .then((response) => {
+          this.getUserList();
+          console.log(response);
+          $("#delete-user").modal("hide");
+        })
+        .catch((error) => {
+          console.log("ERROR :: ", error);
+          $("#delete-user").modal("hide");
+        });
+    },
+    showUserInformation(user) {
+      console.log("show user information", user);
+      $("#view-user").modal("show");
+      var modal = $(this);
+      this.user.name = user.name;
+      this.user.email = user.email;
+      this.user.birthdate = user.dob;
+      this.user.phone = user.phone;
+      this.user.address = user.address;
     },
   },
 };

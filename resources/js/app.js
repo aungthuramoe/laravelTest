@@ -10,6 +10,9 @@ import Vuelidate from 'vuelidate';
 import Vuex from 'vuex'
 import store from './store/index';
 import excel from 'vue-excel-export'
+import ToggleButton from 'vue-js-toggle-button'
+ 
+
  
 // import Vuetify from 'vuetify'
 //import 'vuetify/dist/vuetify.min.css'
@@ -25,6 +28,7 @@ Vue.use(VueAxios, axios);
 Vue.use(Vuex);
 Vue.use(excel)
 Vue.use(Vuelidate);
+Vue.use(ToggleButton)
 
 /**
  * The following block of code may be used to automatically register your

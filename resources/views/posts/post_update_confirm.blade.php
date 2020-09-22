@@ -33,12 +33,12 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-10 col-lg-4">
-                                <button type="submit" value="cancel" name="cancel" class="btn btn-primary  form-control text-uppercase">Cancel Post</i></button>
+                                <button type="submit" value="cancel" name="cancel" class="btn btn-secondary  form-control text-uppercase active">Cancel Post</i></button>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-10 col-lg-4">
-                                <button type="submit" class="btn form-control btn-success text-uppercase">Update Post</i></button>
+                                <button type="submit" class="btn form-control btn-success text-uppercase active">Update Post</i></button>
                             </div>
                         </div>
                     </form>

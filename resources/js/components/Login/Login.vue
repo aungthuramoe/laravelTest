@@ -5,7 +5,7 @@
         <div class="col-md-6 offset-md-2">
           <div>
             <h2 class="text-center">Login</h2>
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="login">
               <div class="form-group">
                 <label for="title">Username</label>
                 <input
@@ -69,7 +69,7 @@ export default {
     },
   },
   methods: {
-    handleSubmit(e) {
+    login() {
       this.submitted = true;
       this.$v.$touch();
       if (this.$v.$invalid) {
@@ -86,12 +86,6 @@ export default {
             this.error = true;
           } else {
             this.error = false;
-            if (user.type == 0) {
-              localStorage.setItem("isAdmin", true);
-            } else {
-              localStorage.setItem("isAdmin", false);
-            }
-
             this.$store.dispatch("isLogin", {
               isLogin: true,
               currentUser: user,

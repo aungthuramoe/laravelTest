@@ -92,12 +92,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param int AdminID (Temp = 19,Auth::id() is empty)
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        $this->userInterface->deleteUser(19, $id);
+        return response()->json(['status' => 'success','message'=>'Successfully Deleted']);
     }
     public function register(Request $request)
     {

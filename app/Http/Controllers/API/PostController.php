@@ -83,7 +83,12 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $isUpdate = $this->postInterface->updatePost($request, $id);
+        if($isUpdate) {
+            return response()->json(['status'=>'success','message'=>'Successfully Update']);
+        }else{
+            return response()->json(['status'=>'error','message'=>'Error occur while Updating']);
+        }
     }
 
     /**
@@ -94,7 +99,7 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $this->postInterface->deletePost(Auth::id(), $id);
+        $this->postInterface->deletePost(19, $id);
     }
     public function searchPost(Request $request)
     {

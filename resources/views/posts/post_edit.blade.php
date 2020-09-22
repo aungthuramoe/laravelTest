@@ -43,12 +43,12 @@
 
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <button class="btn btn-primary form-control  btn-block" onclick="customReset();" type="button">
+                                            <button class="btn btn-secondary form-control  btn-block active" onclick="customReset();" type="button">
                                                 CLEAR
                                             </button>
                                         </div>
                                         <div class="col">
-                                            <button value="update" class="btn btn-success form-control btn-block" type="submit">Confirm</button>
+                                            <button value="update" class="btn btn-success form-control btn-block active" type="submit">Confirm</button>
                                         </div>
                                     </div>
 
