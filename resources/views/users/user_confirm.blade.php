@@ -65,7 +65,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-10 col-md-4">
-                            <button type="submit" value="cancel" name="status" class="btn btn-dark  form-control text-uppercase">Cancel</button>
+                            <button type="submit" value="cancel" name="status" class="btn btn-secondary  form-control text-uppercase active">Cancel</button>
                         </div>
                     </div>
                 </form>

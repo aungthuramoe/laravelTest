@@ -5,6 +5,7 @@ import ConfirmPost from '../components/Post/AddPostConfirm.vue';
 import AllPost from '../components/Post/AllPost.vue';
 import AddUser from '../components/User/AddUser.vue';
 import AddUserConfirm from '../components/User/AddUserConfirm.vue';
+import UpdateUserConfirm from '../components/User/UpdateUserConfirm.vue';
 import AllUser from '../components/User/AllUser.vue';
 import Profile from '../components/User/Profile.vue';
 import ChangePassword from '../components/User/ChangePassword.vue';
@@ -56,6 +57,11 @@ const routes = [
         name: 'users-create-confirm',
         path: '/users-create-confirm',
         component: AddUserConfirm,
+    },
+    {
+        name: 'users-update-confirm',
+        path: '/users-update-confirm',
+        component: UpdateUserConfirm,
     },
     {
         name: 'profile',

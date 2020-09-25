@@ -22,6 +22,7 @@ Route::apiResource('/posts','API\PostController');
 Route::post('/posts/search','API\PostController@searchPost');
 
 Route::post('/import','API\PostController@import');
+Route::get('/export','API\PostController@export');
 Route::post('/vuelogin','API\LoginController@login');
 Route::post('/user/logout','API\LoginController@logout');
 Route::apiResource('/users','API\UserController');

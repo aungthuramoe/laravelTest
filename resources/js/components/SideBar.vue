@@ -30,21 +30,16 @@
 </template>
 
 <script>
-const userModule = "UsersModule";
 export default {
   data() {
-    return {
-    };
-  },
-  mounted() {
-    console.log("Component side bar mounted => ");
+    return {};
   },
   computed: {
     isLogin() {
-      return this.$store.state[userModule].isLogin;
+      return this.$store.state.UsersModule.isLogin;
     },
     currentUser() {
-      return this.$store.state[userModule].currentUser;
+      return this.$store.state.UsersModule.currentUser;
     },
   },
   methods: {

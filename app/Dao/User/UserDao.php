@@ -4,10 +4,9 @@ namespace App\Dao\User;
 
 use App\Contracts\Dao\User\UserDaoInterface;
 use App\User;
-use Exception;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
-use Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log as FacadesLog;
 
 class UserDao implements UserDaoInterface
 {
@@ -69,14 +68,13 @@ class UserDao implements UserDaoInterface
         $user->dob = $request->dob;
         $user->address = $request->address;
         $user->profile = $request->profile;
-        if (auth()->user()->id) {
+        if (Auth::user()) {
             $user->create_user_id = auth()->user()->id;
             $user->updated_user_id = auth()->user()->id;
         } else {
             $user->create_user_id = 19;
             $user->updated_user_id = 19;
         }
-
         $user->save();
     }
 
@@ -101,8 +99,7 @@ class UserDao implements UserDaoInterface
         $user->dob = $request->dob;
         $user->address = $request->address;
         $user->profile = $request->profile;
-        $user->create_user_id = auth()->user()->id;
-        $user->updated_user_id = auth()->user()->id;
+        $user->updated_user_id = $id;
         $user->save();
     }
 

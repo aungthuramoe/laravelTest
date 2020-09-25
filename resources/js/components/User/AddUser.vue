@@ -155,6 +155,7 @@
                     id="profile_image"
                     accept="image/jpeg, image/jpg, image/png"
                     type="file"
+                    @change="onFileChange"
                     :class="{ 'is-invalid': submitted && $v.user.profile.$error }"
                     class="form-control form-control-user"
                     name="profile"
@@ -208,6 +209,7 @@ export default {
         var reader = new FileReader();
         reader.onload = function (e) {
           $("#profile_image-tag").attr("src", e.target.result);
+          localStorage.setItem("profile", e.target.result);
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -235,12 +237,16 @@ export default {
       if (this.$v.$invalid) {
         return;
       }
+      console.log("user in add user", this.user);
       this.$store.dispatch("addUser", this.user);
+      this.$router.push({
+        name: "users-create-confirm",
+      });
     },
     onFileChange(e) {
       var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
-      this.createImage(files[0]);
+      this.user.profile = files[0];
+      //if (!this.user.profile.length) return;
     },
   },
 };

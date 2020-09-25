@@ -4,13 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Contracts\Services\User\UserServiceInterface;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ConfirmPasswordRequest;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use Log;
 use Hash;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -49,32 +48,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // if ($request->hasFile('profile')) {
-        //     $filename = $request->profile->getClientOriginalName();
-        //     $data['profile'] = $filename;
-        //     $path = $request->file('profile')->storeAs(
-        //         'public/images',
-        //         $filename
-        //     );
-        // }
-        //$this->userInterface->saveUser($request);
         try {
+            if ($request->hasFile('profile')) {
+                $filename = $request->profile->getClientOriginalName();
+                $request->file('profile')->storeAs(
+                    'public/images',
+                    $filename
+                );
+                $request->profile = $filename;
+            }
             $this->userInterface->saveUser($request);
             return  response()->json(['status' => 'success', 'message' => "Successfully Crerated"]);
         } catch (QueryException $e) {
-            return response()->json(['status' => 'error', 'message' => "Email  Already Exit", 'error' => $e]);
+            return response()->json(['status' => 'error', 'message' => "Error occur creating user"]);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -86,7 +73,22 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            if ($request->hasFile('profile')) {
+                $filename = $request->profile->getClientOriginalName();
+                $request->file('profile')->storeAs(
+                    'public/images',
+                    $filename
+                );
+                $request->profile = $filename;
+            }
+            $this->userInterface->updateUser($id, $request);
+            return response()->json(['status'=>'success','message'=>'Successfully Update','filename'=>$filename]);
+        }catch(Exception $e){
+
+            return response()->json(['status'=>'error','message'=>'error occur in update']);
+        }
+        
     }
 
     /**
@@ -99,7 +101,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $this->userInterface->deleteUser(19, $id);
-        return response()->json(['status' => 'success','message'=>'Successfully Deleted']);
+        return response()->json(['status' => 'success', 'message' => 'Successfully Deleted']);
     }
     public function register(Request $request)
     {

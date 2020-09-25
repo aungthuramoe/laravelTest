@@ -89,10 +89,8 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             let upload = response["data"];
-            console.log(upload.status);
             if (upload.status == false) {
               this.isUpload = false;
-              console.log("error");
             } else {
               this.isUpload = true;
               this.$router.push({
@@ -102,10 +100,8 @@ export default {
           }
         })
         .catch((error) => {
-          // code here when an upload is not valid
           this.uploading = false;
           this.error = error.response.data;
-          console.log("check error: ", this.error);
         });
     },
   },

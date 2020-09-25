@@ -4,11 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Contracts\Services\Post\PostServiceInterface;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PostRequest;
-use App\Imports\PostImport;
-use App\Models\Post;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Log;
 
 class PostController extends Controller
@@ -29,17 +25,6 @@ class PostController extends Controller
         $posts = $this->postInterface->getPostLists();
         return response()->json($posts);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -48,32 +33,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //Log::info($request->description);
         $this->postInterface->savePost($request);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -84,34 +45,56 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $isUpdate = $this->postInterface->updatePost($request, $id);
-        if($isUpdate) {
-            return response()->json(['status'=>'success','message'=>'Successfully Update']);
-        }else{
-            return response()->json(['status'=>'error','message'=>'Error occur while Updating']);
+        if ($isUpdate) {
+            return response()->json(['status' => 'success', 'message' => 'Successfully Update']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Error occur while Updating']);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->postInterface->deletePost(19, $id);
+        $this->postInterface->deletePost($request->id, $id);
     }
+    /**
+     * Search Post 
+     *
+     * @param  \Illuminate\Http\Request 
+     * @return  \Illuminate\Http\Response
+     */
     public function searchPost(Request $request)
     {
         $posts = $this->postInterface->getUserPost(0, 19, $request->q);
         return response()->json($posts);
     }
-
+    /**
+     * import post with csv file
+     *
+     * @param  \Illuminate\Http\Request 
+     * @return  \Illuminate\Http\Response
+     */
     public function import(Request $request)
     {
-        Log::info("import");
-        Log::info($request);
         $isUpload = $this->postInterface->savePostWithCSV($request->file('csvfile'));
-        return response()->json(["status" => $isUpload,"message" => "my message"]);
+        return response()->json(["status" => $isUpload]);
+    }
+    /**
+     * export post with excel file
+     *
+     * not use
+     * 
+     * @param  \Illuminate\Http\Request 
+     * @return  \Illuminate\Http\Response
+     */
+    public function export()
+    {
+        return $this->postInterface->downloadPost();
     }
 }

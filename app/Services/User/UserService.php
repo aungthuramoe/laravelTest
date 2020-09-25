@@ -5,8 +5,7 @@ namespace App\Services\User;
 use App\Contracts\Dao\User\UserDaoInterface;
 use App\Contracts\Services\User\UserServiceInterface;
 use Illuminate\Support\Facades\Storage;
-use Hash;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 use Log;
 
 /**
@@ -73,7 +72,8 @@ class UserService implements UserServiceInterface
      */
     public function updateUser($id, $request)
     {
-        if (auth()->user()->profile) {
+
+        if (Auth::user()) {
             Storage::delete('public/images/' . auth()->user()->profile);
         }
         $this->userDao->updateUser($id, $request);

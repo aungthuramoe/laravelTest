@@ -117,10 +117,6 @@ export default {
   data() {
     return {};
   },
-  mounted() {
-    console.log("Profile is mounted");
-    console.log("admin or user", localStorage.getItem("isAdmin"));
-  },
   computed: {
     isLogin() {
       return this.$store.state[userModule].isLogin;

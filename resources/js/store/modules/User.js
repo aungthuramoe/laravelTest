@@ -1,38 +1,33 @@
-import router from '../../router/routes'
 const state = {
-    users: [],
     user: {},
     currentUser:{},
+    updateUser:{},
     isLogin:false
 };
-
-const getters = {
-    usersList: state => state.users
-};
-
 const actions = {
     addUser({ commit }, user) {
         commit("addNewUser", user)
-        router.push({
-            name: 'users-create-confirm'
-        });
+    },
+    updateUser({commit},updateUser){
+        commit("updateUser", updateUser)
+    },
+    addUpdateUserToCurrentUser({commit},user){
+        commit('addUpdateUserToCurrentUser',user);
     },
     isLogin({ commit }, {isLogin,currentUser}) {
         commit('isLogin', {isLogin,currentUser});
-        router.push({
-            name: 'posts'
-        })
     }
 };
 
 const mutations = {
     addNewUser: (state, user) => { state.user = user; },
+    updateUser: (state, user) => { state.updateUser = user},
+    addUpdateUserToCurrentUser:(state,user) => {state.currentUser = user},
     isLogin: (state,{isLogin,currentUser}) => {state.isLogin = isLogin;state.currentUser = currentUser}
 };
 
 export default {
     state,
-    getters,
     actions,
     mutations
 }

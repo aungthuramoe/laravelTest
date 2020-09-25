@@ -10,7 +10,7 @@
           <div class="row justify-content-center">
             <div class="col-lg-9">
               <div class="p-0">
-                <form @submit.prevent="updateUser()" enctype="multipart/form-data">
+                <form @submit.prevent="updateUser()">
                   <div class="form-group row">
                     <div class="col-sm-10 col-lg-12 mt-3">
                       <img
@@ -63,6 +63,7 @@
                       <select
                         v-if="currentUser.type == 0"
                         class="form-control form-control-user"
+                        v-model="user.type"
                         name="type"
                         id="type"
                       >
@@ -73,6 +74,7 @@
                         v-else
                         class="form-control form-control-user"
                         disabled
+                        v-model="user.type"
                         name="type"
                         id="type"
                       >
@@ -131,6 +133,7 @@
                         id="profile_image"
                         accept="image/jpeg, image/jpg, image/png"
                         type="file"
+                        @change="onFileChange"
                         :class="{ 'is-invalid': submitted && $v.user.profile.$error }"
                         class="form-control form-control-user"
                         name="profile"
@@ -199,6 +202,7 @@ export default {
         var reader = new FileReader();
         reader.onload = function (e) {
           $("#profile_image-tag").attr("src", e.target.result);
+          localStorage.setItem("updateProfile", e.target.result);
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -208,12 +212,12 @@ export default {
     });
 
     if (this.currentUser) {
+      this.user.id = this.currentUser.id;
       this.user.name = this.currentUser.name;
       this.user.email = this.currentUser.email;
-      this.user.profile = this.currentUser.profile;
       this.user.phone = this.currentUser.phone;
       this.user.dob = this.currentUser.dob;
-      this.user.type = this.currentUser.type;
+      this.user.type = this.currentUser.type == 0 ? "Admin" : "User";
       this.user.address = this.currentUser.address;
     }
   },
@@ -229,7 +233,15 @@ export default {
       if (this.$v.$invalid) {
         return;
       }
-      console.log("updateUser");
+      this.$store.dispatch("updateUser", this.user);
+      this.$router.push({
+        name: "users-update-confirm",
+      });
+    },
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      this.user.profile = files[0];
+      //if (!this.user.profile.length) return;
     },
   },
 };

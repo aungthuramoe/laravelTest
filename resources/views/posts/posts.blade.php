@@ -3,7 +3,10 @@
 @section('content')
 <section>
     <div class="container mt-5">
-       <x-alert />
+        <x-alert />
+        @if (count($posts) === 0)
+        <div class="text-center"><strong>No Post</strong></div>
+        @else
         @if(Auth()->check())
         <div class="d-flex ">
             <div class="py-2 flex-grow-1">
@@ -140,6 +143,7 @@
         </div>
     </div>
 </div>
+@endif
 @endsection
 @push('scripts')
 <script>

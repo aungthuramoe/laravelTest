@@ -120,21 +120,13 @@
     function readURL(input) {
         if (input.files && input.files[0]) {
             localStorage.setItem("filename", input.files[0].name);
-            // localStorage.setItem("file", input.files[0]);
             var reader = new FileReader();
             reader.onload = function(e) {
                 $('#profile_image-tag').attr('src', e.target.result);
                 localStorage.setItem("file", e.target.result);
             }
             reader.readAsDataURL(input.files[0]);
-            console.log("click open");
         } else {
-            //$('#profile_image').val(localStorage.getItem("file"));
-            console.log("profile value is ", $('#profile_image').val());
-            //console.log(localStorage.getItem("file"));
-            // $('#profile_image').val(localStorage.getItem("file"));
-            //console.log(localStorage.getItem("filename"));
-            //$(this).next('.custom-file-label').html(localStorage.getItem("filename"));
             $('#profile_image-tag').attr('src', '');
         }
     }
@@ -149,7 +141,6 @@
         });
     });
     $('#profile_image').change(function() {
-        //console.log($('#profile_image')[0].files[0].name);
         $('#selected_filename').text($('#profile_image')[0].files[0].name);
     });
 </script>

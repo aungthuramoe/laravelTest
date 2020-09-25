@@ -42,16 +42,6 @@ class PostController extends Controller
             "posts" => $postLists
         ]);
     }
-    /**
-     * Show Post List as Json Format for Vue
-     * 
-     * @return array
-     */
-
-    public function addPost(Request $request)
-    {
-        dd($request);
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -217,23 +207,4 @@ class PostController extends Controller
         return redirect('/')->with('message', 'Post Create Successfully');
     }
 
-    /**
-     *Create Post with vue
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function submit(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string',
-            'description' => 'required',
-        ]);
-
-        /*
-          Add mail functionality here.
-        */
-
-        return response()->json(null, 200);
-    }
 }
