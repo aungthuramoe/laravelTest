@@ -7,9 +7,11 @@
         @if (count($posts) === 0)
         <div class="text-center"><strong>No Post</strong></div>
         @if(Auth()->check())
-		<div class="text-center">
-			<a href="posts/create" type="button" class="btn btn-success btn-circle btn-xl">Add Post <i class="fa fa-plus fa-lg"></i></a>
-		</div>
+        <div class="text-center">
+            <a href="posts/create" type="button" class="btn btn-success active">
+                Add Post <i class="fa fa-plus fa-lg"></i>
+            </a>
+        </div>
         @endif
         @else
         @if(Auth()->check())

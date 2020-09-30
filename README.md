@@ -12,7 +12,7 @@ php artisan migrate
 php artisan db:seed --class=AdminSeeder
 php artisan serve or php -S localhost:8000 -t public/ (you can change port)
 ```
-- goto your running project url and login with username=>Admin and password is 123456 
+- goto your running project url and login with email=>admin@gmail.com and password is Admin2020 
 - If you want to generate posts, type folowing command or create post from UI
 ```shill
 php artisan db:seed --class=PostsSeeder
@@ -22,7 +22,10 @@ php artisan db:seed --class=PostsSeeder
 - Posts
 
 ## Note 
-
+> If you profile image is not show, please run following command
+```shell
+php artisan storage:link
+```
 > If you want to run Laravel Project, change config/auth.php 
 ```shell
 'defaults' => [
