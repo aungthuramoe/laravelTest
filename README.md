@@ -30,7 +30,7 @@ php artisan db:seed --class=PostsSeeder
         'passwords' => 'users',
     ],
 ```
-- Read <a href=" https://jwt-auth.readthedocs.io/en/develop/laravel-installation/" target="_blank">here</a> to add jwt-auth token
+- Read <a href="https://jwt-auth.readthedocs.io/en/develop/laravel-installation/" target="_blank">here</a> to add jwt-auth token
 - Read Documentation <a href="https://jwt-auth.readthedocs.io/en/develop/quick-start/" target="_blank">here</a> to generate jwt token
 > If you want to run Vue Project, change config/auth.php
 ```shell
