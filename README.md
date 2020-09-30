@@ -1,6 +1,6 @@
 ## About Bullentine Board Project
 
-Bullentine Board  is a simple CRUD Laravel and Laravel+Vue.User can CRUD posts and admin user can CRUD both users and posts.Guest user can see only post.You can clone project [here](git clone https://github.com/aungthuramoe/laravelTest.git)
+Bullentine Board  is a simple CRUD Laravel and Laravel+Vue.User can CRUD posts and admin user can CRUD both users and posts.Guest user can see only post.You can clone project  <a href="https://github.com/aungthuramoe/laravelTest.git" target="_blank">here</a>
 
 ## Installtion
 - git clone https://github.com/aungthuramoe/laravelTest.git
