@@ -54,6 +54,7 @@ php artisan storage:link
     ],
 ],
 ```
+> goto http:localhost:8000/posts to start project (http:localhost:8000 can conflict with laravel project)
 
 ## License
 
