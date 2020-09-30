@@ -13,7 +13,7 @@ php artisan db:seed --class=AdminSeeder
 php artisan serve or php -S localhost:8000 -t public/ (you can change port)
 ```
 - goto your running project url and login with username=>Admin and password is 123456 
-- If you want to generate posts,type folowing command or create post from UI
+- If you want to generate posts, type folowing command or create post from UI
 ```shill
 php artisan db:seed --class=PostsSeeder
 ```
@@ -30,8 +30,8 @@ php artisan db:seed --class=PostsSeeder
         'passwords' => 'users',
     ],
 ```
-- Read <a href="https://jwt-auth.readthedocs.io/en/develop/laravel-installation/" target="_blank">here</a> to add jwt-auth token
-- Read Documentation <a href="https://jwt-auth.readthedocs.io/en/develop/quick-start/" target="_blank">here</a> to generate jwt token
+- Read <a href="https://jwt-auth.readthedocs.io/en/develop/laravel-installation/" target="_blank">here</a> to install jwt-auth token
+- After installation , read <a href="https://jwt-auth.readthedocs.io/en/develop/quick-start/" target="_blank">here</a> to generate jwt token
 > If you want to run Vue Project, change config/auth.php
 ```shell
 'defaults' => [
