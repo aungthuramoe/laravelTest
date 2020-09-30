@@ -27,6 +27,18 @@ Bullentine Board  is a simple CRUD Laravel and Laravel+Vue.User can CRUD posts a
         'guard' => 'api',
         'passwords' => 'users',
     ],
+'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+        'hash' => false,
+    ],
+],
 ```
 
 ## License
