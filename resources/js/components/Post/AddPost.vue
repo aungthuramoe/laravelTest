@@ -85,6 +85,9 @@ export default {
         return;
       }
       this.$store.dispatch("addPost", this.post);
+      this.$router.push({
+          name:"posts-create-confirm"
+      })
     },
   },
 };

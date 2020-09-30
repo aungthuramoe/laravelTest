@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+Use Log;
 
 /**
  * SystemName : Bulletinboard
@@ -168,6 +169,7 @@ class PostController extends Controller
      */
     public function destroy(Request $request)
     {
+
         $this->postInterface->deletePost(Auth::id(), $request->post_id);
         return redirect('/')->with('message', 'Delete Successfully');
     }

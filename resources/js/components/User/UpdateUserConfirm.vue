@@ -142,13 +142,14 @@ export default {
         .post(`/api/users/${this.user.id}`, formData, config)
         .then((response) => {
           if (response["data"].status == "success") {
+            this.user.profile = localStorage.getItem("filename")
             this.$store.dispatch("addUpdateUserToCurrentUser", this.user);
             this.$router.push({
               name: "profile",
             });
           } else {
             this.$router.push({
-              name: "users",
+              name: "edit-profile",
             });
           }
         })

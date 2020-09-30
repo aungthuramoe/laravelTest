@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <h1>Profile -> {{isLogin}}</h1>-->
-    <!-- <p>{{currentUser}}</p> -->
     <div class="card">
       <div class="card-header text-center">
         <strong class="text-primary">User Profile</strong>
@@ -116,6 +114,9 @@ const userModule = "UsersModule";
 export default {
   data() {
     return {};
+  },
+  mounted() {
+console.log("Profile ",this.currentUser.profile)
   },
   computed: {
     isLogin() {

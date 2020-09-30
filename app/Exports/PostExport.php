@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Log;
 
 class PostExport implements FromCollection
 {
@@ -13,11 +14,10 @@ class PostExport implements FromCollection
      */
     public function collection()
     {
-        return Post::all();
-        // if (Auth::user()->type == 0) {
-        //     return Post::all();
-        // } else {
-        //     return Post::where('create_user_id', auth()->user()->id)->get();
-        // }
+        if (Auth::user()->type == 0) {
+            return Post::all();
+        } else {
+            return Post::where('create_user_id', auth()->user()->id)->get();
+        }
     }
 }

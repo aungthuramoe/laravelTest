@@ -140,6 +140,7 @@ export default {
       const config = {
         headers: {
           "content-type": "multipart/form-data",
+          
         },
       };
       let formData = new FormData();

@@ -8,7 +8,6 @@ use App\Imports\PostImport;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
-use Log;
 
 class PostDao implements PostDaoInterface
 {
@@ -21,8 +20,8 @@ class PostDao implements PostDaoInterface
     {
         return Post::latest()->paginate(8);
     }
-    
-     /**
+
+    /**
      * Get User Post List
      * 
      * @param int $id
@@ -68,7 +67,7 @@ class PostDao implements PostDaoInterface
         return $posts;
     }
 
-     /**
+    /**
      *  Get the specified post data.
      * 
      * @param int $id
@@ -105,25 +104,24 @@ class PostDao implements PostDaoInterface
         $post = new Post;
         $post->title = $request->title;
         $post->description =  $request->description;
-        if(Auth::user()){
+        if (Auth::user()) {
             $post->create_user_id = auth()->user()->id;
             $post->updated_user_id = auth()->user()->id;
-        }else{
+        } else {
             $post->create_user_id = 31;
             $post->updated_user_id = 31;
-
         }
         $post->save();
     }
 
-      /**
+    /**
      * Update Post 
      *
      * @param  \Illuminate\Http\Request  $request
      * @param int $id
      * @return void
      */
-    public function updatePost($request,$id)
+    public function updatePost($request, $id)
     {
         $post = Post::find($id);
         $post->title = $request->title;
@@ -132,7 +130,7 @@ class PostDao implements PostDaoInterface
         $post->update();
     }
 
-     /**
+    /**
      * Save Post with CSV 
      *
      * @param  \Illuminate\Http\Request  $uploadCSVFile
@@ -148,8 +146,26 @@ class PostDao implements PostDaoInterface
      *
      * @return posts.xlsx file
      */
-    public function downloadPost()  
+    public function downloadPost()
     {
         return Excel::download(new PostExport, 'posts.xlsx');
+    }
+
+    /**
+     * Return PostList to download in Vue
+     *
+     * @param $id
+     * @param $type
+     * @return posts 
+     */
+    public function downloadPostForVueExcel($id,$type)
+    {
+        if ($type == 0) {
+            $posts = Post::get();
+        } else {
+            
+            $posts = Post::where('create_user_id', $id)->get();
+        }
+        return $posts;
     }
 }

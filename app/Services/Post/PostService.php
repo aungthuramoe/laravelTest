@@ -144,4 +144,14 @@ class PostService implements PostServiceInterface
     {
         return $this->postDao->downloadPost();
     }
+
+    /**
+     * return post list
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadPostForVueExcel($type, $id)
+    {
+        return $this->postDao->downloadPostForVueExcel($type,$id);
+    }
 }

@@ -28,7 +28,7 @@
           <div v-if="isLogin" class="pl-3">
             <export-excel
               class="btn btn-primary pl-3"
-              :data="posts.data"
+              :fetch="fetchData"
               name="posts.xls"
             >
               Download
@@ -285,6 +285,9 @@ export default {
   created() {
     this.getAllPost();
   },
+  mounted(){
+console.log(localStorage.getItem("token"));
+  },
   methods: {
     getAllPost(page = 1) {
       axios
@@ -326,7 +329,7 @@ export default {
     deletePost() {
       $("#delete-post").modal("hide");
       axios
-        .delete("/api/posts/" + this.deletePostID, { data: this.currentUser })
+        .delete("/api/posts/" + this.deletePostID)
         .then((response) => {
           this.$store.dispatch("error", "Delete successful", { root: true });
           this.getAllPost();
@@ -362,12 +365,14 @@ export default {
           $("#view-post").modal("hide");
         });
     },
-    async downLoadPost() {
-      console.log("download post");
-      await axios.get("/api/export").then((response) => {
-        var result = response["data"];
-        return result;
-      });
+    async fetchData() {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("token")}`;
+      const response = await axios.get("/api/export");
+      console.log("data 1", response["data"].posts);
+      console.log("data 2", this.posts.data);
+      return response["data"].posts;
     },
   },
 };

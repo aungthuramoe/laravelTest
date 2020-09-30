@@ -18,17 +18,28 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('/posts','API\PostController');
-Route::post('/posts/search','API\PostController@searchPost');
+Route::apiResource('/posts', 'API\PostController');
+Route::post('/posts/search', 'API\PostController@searchPost');
 
-Route::post('/import','API\PostController@import');
-Route::get('/export','API\PostController@export');
-Route::post('/vuelogin','API\LoginController@login');
-Route::post('/user/logout','API\LoginController@logout');
-Route::apiResource('/users','API\UserController');
-Route::post('/users/search','API\UserController@searchUser');
-Route::post('/user/change-password','API\UserController@changePassword');
+Route::post('/import', 'API\PostController@import');
+Route::get('/export', 'API\PostController@export');
+
 
 // Route::group(['middleware' => ['auth', 'admin']], function () {
 //     Route::apiResource('/users','API\UserController');
 // });
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function () {
+    Route::post('login', 'API\AuthController@login');
+    Route::post('logout', 'API\AuthController@logout');
+});
+// Route::group(['middleware' => ['admin'],'prefix' =>'auth'], function () {
+// });
+Route::apiResource('/users', 'API\UserController');
+Route::post('/users/search', 'API\UserController@searchUser');
+Route::post('/users/search', 'API\UserController@searchUser');
+Route::post('/user/change-password', 'API\UserController@changePassword');

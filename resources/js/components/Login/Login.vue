@@ -20,7 +20,9 @@
                 <div
                   v-if="submitted && !$v.user.email.required"
                   class="invalid-feedback"
-                >Email is required</div>
+                >
+                  Email is required
+                </div>
               </div>
               <div class="form-group">
                 <label for="password">Password</label>
@@ -30,14 +32,20 @@
                   name="password"
                   class="form-control"
                   placeholder="Enter Password"
-                  :class="{ 'is-invalid': submitted && $v.user.password.$error }"
+                  :class="{
+                    'is-invalid': submitted && $v.user.password.$error,
+                  }"
                 />
                 <div
                   v-if="submitted && !$v.user.password.required"
                   class="invalid-feedback"
-                >Password is required</div>
+                >
+                  Password is required
+                </div>
               </div>
-              <span v-if="error" class="text-danger">Please enter correct email and password</span>
+              <span v-if="error" class="text-danger"
+                >Please enter correct email and password</span
+              >
               <div class="form-group mt-2">
                 <button class="col-md-3 btn btn-primary">Login</button>
               </div>
@@ -76,16 +84,19 @@ export default {
         return;
       }
       axios
-        .post("/api/vuelogin", {
+        .post("http://localhost:8000/api/auth/login", {
           email: this.user.email,
           password: this.user.password,
         })
         .then((response) => {
-          let user = response["data"];
+          console.log("RES ::: ", response);
+          let user = response["data"].user;
+          let token = response["data"].token;
           if (!user) {
             this.error = true;
           } else {
             this.error = false;
+            localStorage.setItem("token", token);
             this.$store.dispatch("isLogin", {
               isLogin: true,
               currentUser: user,
@@ -96,7 +107,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.log("ERROR :: ", error);
+          this.error = true;
         });
     },
   },

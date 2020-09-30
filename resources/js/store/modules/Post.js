@@ -3,11 +3,8 @@ const state = {
     post: {},
 };
 const actions = {
-    async addPost({ commit }, post) {
+    addPost({ commit }, post) {
         commit("addNewPost", post)
-        router.push({
-            name: 'posts-create-confirm'
-        });
     },
 };
 const mutations = {

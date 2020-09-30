@@ -20,4 +20,6 @@ interface PostServiceInterface
   public function savePostWithCSV($uploadCSVFile);
   //download post with xlsx extension
   public function downloadPost();
+// download post with xlsx extension for axios
+  public function downloadPostForVueExcel($type,$id);
 }

@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Exception;
 use Illuminate\Http\Request;
-use Log;
 use Hash;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -21,6 +21,7 @@ class UserController extends Controller
      * Create a new controller instance.
      *
      * @param UserServiceInterface $userInterface
+     * 
      * @return void
      */
     public function __construct(UserServiceInterface $userInterface)
@@ -31,8 +32,8 @@ class UserController extends Controller
     /**
      * Display a listing of the user.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -44,7 +45,8 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -69,7 +71,8 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
@@ -83,35 +86,56 @@ class UserController extends Controller
                 $request->profile = $filename;
             }
             $this->userInterface->updateUser($id, $request);
-            return response()->json(['status'=>'success','message'=>'Successfully Update','filename'=>$filename]);
-        }catch(Exception $e){
+            return response()->json(['status' => 'success', 'message' => 'Successfully Update', 'filename' => $filename]);
+        } catch (Exception $e) {
 
-            return response()->json(['status'=>'error','message'=>'error occur in update']);
+            return response()->json(['status' => 'error', 'message' => 'error occur in update']);
         }
-        
     }
-
     /**
      * Remove the specified resource from storage.
      *
-     * @param int AdminID (Temp = 19,Auth::id() is empty)
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
-        $this->userInterface->deleteUser(19, $id);
+        $this->userInterface->deleteUser(Auth::id(), $id);
         return response()->json(['status' => 'success', 'message' => 'Successfully Deleted']);
     }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return void
+     */
     public function register(Request $request)
     {
         $this->userInterface->saveUser($request);
     }
+
+    /**
+     * Search resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\JsonResponse $users
+     */
     public function searchUser(Request $request)
     {
         $users = $this->userInterface->getSearchUserList($request);
         return response()->json($users);
     }
+
+     /**
+     * Change Password
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function changePassword(Request $request)
     {
         $user = User::find($request->id);

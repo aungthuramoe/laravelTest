@@ -4,13 +4,28 @@ namespace App\Http\Controllers\API;
 
 use App\Contracts\Services\Post\PostServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Imports\PostImport;
+use App\Models\Post;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PostController extends Controller
 {
+    /**
+     * The user service interface instance.
+     */
     protected $postInterface;
-
+    /**
+     * Create a new controller instance.
+     *
+     * @param PostServiceInterface $userInterface
+     * 
+     * @return void
+     */
     public function __construct(PostServiceInterface $postInterface)
     {
         $this->postInterface = $postInterface;
@@ -18,7 +33,7 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -29,18 +44,25 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 
+     * @return void
      */
     public function store(Request $request)
     {
-        $this->postInterface->savePost($request);
+           $isSave = $this->postInterface->savePost($request);
+           if($isSave){
+               return response()->json(["status"=>"success","message"=>"Successfully Created"]);
+            }else{
+                return response()->json(["status"=>"error","message"=>"Error Occur while creating post"],409);
+            }
     }
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 
+     * @return  @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
@@ -59,9 +81,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return void
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        $this->postInterface->deletePost($request->id, $id);
+        $this->postInterface->deletePost(Auth::id(), $id);
     }
     /**
      * Search Post 
@@ -78,7 +100,7 @@ class PostController extends Controller
      * import post with csv file
      *
      * @param  \Illuminate\Http\Request 
-     * @return  \Illuminate\Http\Response
+     * @return  $isUpload 
      */
     public function import(Request $request)
     {
@@ -86,15 +108,13 @@ class PostController extends Controller
         return response()->json(["status" => $isUpload]);
     }
     /**
-     * export post with excel file
-     *
-     * not use
+     * return posts
      * 
-     * @param  \Illuminate\Http\Request 
-     * @return  \Illuminate\Http\Response
+     *  @return \Illuminate\Http\JsonResponse
      */
     public function export()
     {
-        return $this->postInterface->downloadPost();
+        $posts = $this->postInterface->downloadPostForVueExcel(Auth::id(), Auth::user()->type);
+        return response()->json(['posts' => $posts]);
     }
 }

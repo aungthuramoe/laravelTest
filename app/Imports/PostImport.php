@@ -14,17 +14,11 @@ class PostImport implements ToModel
     */
     public function model(array $row)
     {
-        // return new Post([
-        //     'title'     => $row[0],
-        //     'description'   => $row[1], 
-        //     'create_user_id' => auth()->user()->id,
-        //     'updated_user_id' => auth()->user()->id,
-        // ]);
         return new Post([
             'title'     => $row[0],
             'description'   => $row[1], 
-            'create_user_id' => 19,
-            'updated_user_id' => 19,
+            'create_user_id' => auth()->user()->id,
+            'updated_user_id' => auth()->user()->id,
         ]);
     }
 }
