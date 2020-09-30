@@ -6,7 +6,7 @@ Bullentine Board  is a simple CRUD Laravel and Laravel+Vue.User can CRUD posts a
 - git clone https://github.com/aungthuramoe/laravelTest.git
 - composer install
 - npm install
-- rename .env.example file to env and update your env file to connect database 
+- rename .env.example file to .env and update your .env file to connect database 
 ```shill
 php artisan migrate
 php artisan db:seed --class=AdminSeeder
